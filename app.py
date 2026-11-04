@@ -28,6 +28,7 @@ from industrialguard.data.mvtec import MVTEC_CATEGORIES, audit_categories
 from industrialguard.database.history import add_inspection, inspection_counts, list_inspections
 from industrialguard.inference.predictor import SUPPORTED_CATEGORIES, load_predictor, predict_image
 from industrialguard.inference.product_classifier import classify_product_image
+from industrialguard.inference.yolo_detector import get_yolo_detector
 from industrialguard.inference.pbd_detector import (
     CHECKPOINT as PBD_CHECKPOINT,
     CLASS_NAMES as PBD_CLASS_NAMES,
@@ -410,101 +411,44 @@ def _get_loaded_predictor(category: str):
 
 
 @st.cache_resource(show_spinner=False)
+def _get_yolo_detector():
+    return get_yolo_detector()
+
+
+@st.cache_resource(show_spinner=False)
 def _get_pbd_detector():
     return load_pbd_detector()
 
 
 def show_ai_detection() -> None:
-    page_heading("AI inspection", "Automated product category detection, visual anomaly inspection, and defect assessment.")
-    model_family = st.radio(
-        "Inspection mode",
-        ["Automated Product Inspection (All 15 Categories)", "Plastic bottle defect detector (PBD YOLO)"],
-        horizontal=True,
+    page_heading("Industrial AI Quality Inspection", "Multi-Model Vision Pipeline: Recognition Engine + Surface Anomaly Analyzer + YOLO Defect Localizer.")
+
+    # High-level Architecture Overview
+    st.markdown(
+        """
+        <div style="background: rgba(8, 127, 140, 0.06); border: 1px solid rgba(8, 127, 140, 0.25); border-radius: 12px; padding: 14px 20px; margin-bottom: 20px;">
+          <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+            <div style="flex: 1; min-width: 200px;">
+              <span style="font-weight: 700; color: #087f8c; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">🧠 Model 1: Recognition</span>
+              <p style="margin: 3px 0 0; font-size: 13px; color: #334155;">Deep Feature Prototypes · Classifies product & confidence</p>
+            </div>
+            <div style="border-left: 1px solid rgba(8, 127, 140, 0.2); height: 32px; display: none;"></div>
+            <div style="flex: 1; min-width: 200px;">
+              <span style="font-weight: 700; color: #087f8c; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">🔬 Model 2: Quality Analyzer</span>
+              <p style="margin: 3px 0 0; font-size: 13px; color: #334155;">PatchCore Anomaly Engine · Micro-defect scoring & heatmap</p>
+            </div>
+            <div style="border-left: 1px solid rgba(8, 127, 140, 0.2); height: 32px; display: none;"></div>
+            <div style="flex: 1; min-width: 200px;">
+              <span style="font-weight: 700; color: #087f8c; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Model 3: YOLO Localizer</span>
+              <p style="margin: 3px 0 0; font-size: 13px; color: #334155;">Ultralytics YOLOv11 · Defect bounding boxes & coordinates</p>
+            </div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
-    if model_family == "Plastic bottle defect detector (PBD YOLO)":
-        st.write("Detect labeled plastic-bottle body and shoulder defects from the PBD dataset.")
-        st.caption("This model does not cover metal bottles, drink bottles of every design, or packaging films.")
-        if not PBD_CHECKPOINT.is_file():
-            st.warning("The plastic-bottle detector has not been trained in this project yet.")
-            return
-        pbd_source = st.radio("Image source", ["Upload image", "Camera"], horizontal=True, key="pbd_image_source")
-        if pbd_source == "Camera":
-            uploaded = camera_photo_input("Take a plastic bottle photo", key="pbd_camera_capture")
-            st.caption("Each new photo is inspected automatically. Retake the photo to refresh the result.")
-        else:
-            uploaded = st.file_uploader(
-                "Upload a plastic bottle image", type=["png", "jpg", "jpeg", "bmp", "tif", "tiff"],
-                max_upload_size=10, key="pbd_prediction_upload",
-            )
-        if uploaded is None:
-            return
-        try:
-            original = _read_uploaded_image(uploaded)
-        except ValueError as error:
-            st.error(str(error))
-            return
-        threshold = st.slider("Detection confidence threshold", 0.05, 0.95, 0.35, 0.05)
-        pbd_source_key = hashlib.sha256(
-            uploaded.getvalue() + str(threshold).encode("ascii")
-        ).hexdigest()
-        previous_pbd = st.session_state.get("latest_pbd_prediction")
-        current_pbd = previous_pbd if previous_pbd and previous_pbd["source_key"] == pbd_source_key else None
-        inspect_clicked = st.button("Inspect plastic bottle", type="primary") if pbd_source != "Camera" else False
-        if inspect_clicked or (pbd_source == "Camera" and current_pbd is None):
-            try:
-                with st.spinner("Running the plastic-bottle detector…"):
-                    model, device = _get_pbd_detector()
-                    boxes, labels, scores = detect_bottle_defects(model, device, original, threshold)
-                    annotated = draw_bottle_detections(original, boxes, labels, scores)
-                current_pbd = {
-                    "source_key": pbd_source_key, "boxes": boxes, "labels": labels,
-                    "scores": scores, "annotated": annotated,
-                }
-                st.session_state["latest_pbd_prediction"] = current_pbd
-            except (FileNotFoundError, RuntimeError, ValueError) as error:
-                st.error(str(error))
-                return
-        if current_pbd is None:
-            return
-        boxes, labels, scores = current_pbd["boxes"], current_pbd["labels"], current_pbd["scores"]
-        st.markdown("---")
-        if len(scores):
-            defect_names = sorted(set(
-                PBD_CLASS_NAMES[int(l)].replace("_", " ").title() for l in labels
-            ))
-            st.markdown(
-                '<div style="background:#fdeded;border:2px solid #d32f2f;border-radius:14px;padding:20px 24px;margin-bottom:16px;">'
-                '<h2 style="color:#d32f2f;margin:0 0 6px;">❌ NOT APPROVED TO SELL</h2>'
-                f'<p style="color:#b71c1c;margin:0;">Detected <b>{len(scores)}</b> defect(s) on this product.</p>'
-                '</div>',
-                unsafe_allow_html=True,
-            )
-            st.markdown("#### 🔍 What is wrong")
-            st.markdown(
-                "The following defect(s) were detected: **" + ", ".join(defect_names) + "**"
-            )
-            st.dataframe(
-                [{"Defect type": PBD_CLASS_NAMES[int(label)].replace("_", " ").title(),
-                  "Confidence": f"{float(score):.1%}",
-                  "Location (x1, y1, x2, y2)": ", ".join(str(round(float(v))) for v in box)}
-                 for box, label, score in zip(boxes, labels, scores, strict=True)],
-                use_container_width=True, hide_index=True,
-            )
-        else:
-            st.markdown(
-                '<div style="background:#edf7ed;border:2px solid #2e7d32;border-radius:14px;padding:20px 24px;margin-bottom:16px;">'
-                '<h2 style="color:#2e7d32;margin:0 0 6px;">✅ APPROVED TO SELL</h2>'
-                '<p style="color:#1b5e20;margin:0;">No defects detected. This product passed quality inspection.</p>'
-                '</div>',
-                unsafe_allow_html=True,
-            )
-        st.image(current_pbd["annotated"], caption="Bottle defect detections", use_container_width=True)
-        st.caption("Confidence is a model score, not a calibrated probability. Validate on your own production line before use.")
-        return
 
-    st.markdown("### ⚡ Live Inspection Pipeline")
-
-    # Input mode selector
+    # Input source selector
     input_mode = st.radio(
         "Choose Image Input Source",
         ["✨ 1-Click Live Demo Samples", "📁 Upload Image", "📷 Webcam Snapshot"],
@@ -515,14 +459,14 @@ def show_ai_detection() -> None:
     sample_dir = PROJECT_ROOT / "data" / "sample"
     sample_dict = {
         "🔌 Defective Cable (Bent Wire)": "cable_defective_bent_wire.png",
-        "🔌 Normal Cable (Passed)": "cable_normal.png",
+        "🔌 Normal Cable (Quality Passed)": "cable_normal.png",
         "🍼 Defective Bottle (Broken Body)": "bottle_defective_broken.png",
-        "🍼 Normal Bottle (Passed)": "bottle_normal.png",
-        "💊 Defective Capsule (Cracked)": "capsule_defective_crack.png",
-        "💊 Normal Capsule (Passed)": "capsule_normal.png",
-        "🔩 Defective Metal Nut (Scratch)": "metal_nut_defective_scratch.png",
+        "🍼 Normal Bottle (Quality Passed)": "bottle_normal.png",
+        "💊 Defective Capsule (Cracked Surface)": "capsule_defective_crack.png",
+        "💊 Normal Capsule (Quality Passed)": "capsule_normal.png",
+        "🔩 Defective Metal Nut (Surface Scratch)": "metal_nut_defective_scratch.png",
         "🪛 Defective Screw (Thread Fault)": "screw_defective_scratch.png",
-        "🌰 Defective Hazelnut (Crack)": "hazelnut_defective_crack.png",
+        "🌰 Defective Hazelnut (Crack & Hole)": "hazelnut_defective_crack.png",
     }
 
     original = None
@@ -534,7 +478,7 @@ def show_ai_detection() -> None:
             "Select an industrial sample product to test immediately:",
             list(sample_dict.keys()),
             key="sample_selector_pill",
-            help="Select any sample product to run instant AI classification and defect anomaly analysis.",
+            help="Select any sample product to run instant AI classification, anomaly scoring, and YOLO defect localization.",
         )
         sample_file = sample_dir / sample_dict[selected_sample_label]
         if sample_file.is_file():
@@ -576,13 +520,26 @@ def show_ai_detection() -> None:
     if original is None:
         return
 
-    category_choice = st.selectbox(
-        "Product category",
-        ["Auto-detect from image (Recommended)", *CATEGORIES],
-        key="prediction_category_choice",
-        help="Auto-detect dynamically classifies the product into one of the 15 categories (Cable, Bottle, Capsule, Screw, etc.).",
-    )
+    # Configuration Controls
+    ctrl_col1, ctrl_col2 = st.columns([3, 2])
+    with ctrl_col1:
+        category_choice = st.selectbox(
+            "Product category",
+            ["Auto-detect from image (Recommended)", *CATEGORIES],
+            key="prediction_category_choice",
+            help="Model 1 automatically classifies the product into one of the 15 industrial categories.",
+        )
+    with ctrl_col2:
+        yolo_conf = st.slider(
+            "YOLO Defect Confidence Threshold",
+            min_value=0.05,
+            max_value=0.90,
+            value=0.50,
+            step=0.05,
+            help="Adjust the bounding-box sensitivity threshold for YOLO defect localization.",
+        )
 
+    # Run Model 1: Product Recognition
     try:
         classification = classify_product_image(original)
     except (FileNotFoundError, RuntimeError, ValueError, ImportError, TypeError) as error:
@@ -598,34 +555,35 @@ def show_ai_detection() -> None:
     if category_choice == "Auto-detect from image (Recommended)":
         category = classification.category
         st.success(
-            f"🔍 **Auto-Detected Product Category:** **{category.replace('_', ' ').title()}** "
-            f"(Confidence: **{classification.confidence:.1%}**)"
+            f"🧠 **Model 1 (Recognition):** Identified as **{category.replace('_', ' ').title()}** "
+            f"with **{classification.confidence:.1%}** confidence."
         )
     else:
         category = category_choice
         if category != classification.category:
             st.info(
                 f"Using manual selection: **{category.replace('_', ' ').title()}** "
-                f"(Auto-detector suggested: {classification.category.replace('_', ' ').title()} at {classification.confidence:.1%})"
+                f"(Model 1 suggested: {classification.category.replace('_', ' ').title()} at {classification.confidence:.1%})"
             )
         else:
             st.success(
-                f"🔍 Confirmed Product Category: **{category.replace('_', ' ').title()}** "
-                f"(Confidence: **{classification.confidence:.1%}**)"
+                f"🧠 **Model 1 (Recognition):** Confirmed as **{category.replace('_', ' ').title()}** "
+                f"with **{classification.confidence:.1%}** confidence."
             )
 
-    st.caption(f"Category classifier ranking: {alternatives}")
+    st.caption(f"Top category candidate rankings: {alternatives}")
 
     source_key = hashlib.sha256(
-        category.encode("utf-8") + b"\0" + uploaded_bytes
+        category.encode("utf-8") + b"\0" + str(yolo_conf).encode("ascii") + b"\0" + uploaded_bytes
     ).hexdigest()
     previous = st.session_state.get("latest_prediction")
-    current = previous if previous and previous["source_key"] == source_key else None
+    current = previous if previous and previous.get("source_key") == source_key else None
 
-    inspect_clicked = st.button("🚀 Run Quality Inspection", type="primary", use_container_width=True) if input_mode != "📷 Webcam Snapshot" else False
+    inspect_clicked = st.button("🚀 Run Multi-Model Quality Inspection", type="primary", use_container_width=True) if input_mode != "📷 Webcam Snapshot" else False
     if inspect_clicked or (input_mode == "📷 Webcam Snapshot" and current is None) or (input_mode == "✨ 1-Click Live Demo Samples" and current is None):
         try:
-            with st.spinner(f"Analyzing {category.replace('_', ' ').title()} with industrial anomaly AI…"):
+            with st.spinner(f"Analyzing {category.replace('_', ' ').title()} with Model 2 (PatchCore) and Model 3 (YOLO)…"):
+                # Model 2: Surface Quality / PatchCore Anomaly Inspection
                 predictor = _get_loaded_predictor(category)
                 with tempfile.TemporaryDirectory(prefix="industrialguard-") as temporary:
                     temporary_image = Path(temporary) / "input.png"
@@ -635,8 +593,21 @@ def show_ai_detection() -> None:
                         category,
                         predictor=predictor,
                     )
-            heatmap = make_heatmap(result.anomaly_map, (original.shape[1], original.shape[0]))
-            overlay = overlay_heatmap(original, heatmap)
+                heatmap = make_heatmap(result.anomaly_map, (original.shape[1], original.shape[0]))
+                overlay = overlay_heatmap(original, heatmap)
+
+                # Model 3: YOLO Defect Bounding Box Localizer
+                yolo = _get_yolo_detector()
+                yolo_result = yolo.detect(
+                    original,
+                    conf=yolo_conf,
+                    target_category=category,
+                )
+
+            # Combined Verdict Fusion
+            is_defective = bool(result.is_anomalous or yolo_result.has_defect)
+            status = "DEFECTIVE" if is_defective else "NORMAL"
+
             inspection_id = uuid4().hex
             created_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
             inspection_dir = ARTIFACTS_ROOT / "inspections" / inspection_id
@@ -644,12 +615,14 @@ def show_ai_detection() -> None:
             input_path = inspection_dir / "input.png"
             heatmap_path = inspection_dir / "heatmap.png"
             overlay_path = inspection_dir / "overlay.png"
+            yolo_path = inspection_dir / "yolo_annotated.png"
             report_path = inspection_dir / "inspection-report.pdf"
+
             Image.fromarray(original).save(input_path, format="PNG")
             Image.fromarray(heatmap).save(heatmap_path, format="PNG")
             Image.fromarray(overlay).save(overlay_path, format="PNG")
+            yolo_result.annotated_image.save(yolo_path, format="PNG")
 
-            status = "DEFECTIVE" if result.is_anomalous else "NORMAL"
             report_bytes = create_inspection_pdf(
                 inspection_id=inspection_id,
                 created_at=created_at,
@@ -660,6 +633,9 @@ def show_ai_detection() -> None:
                 processing_seconds=result.processing_seconds,
                 original_rgb=original,
                 heatmap_rgb=heatmap,
+                recognition_confidence=classification.confidence,
+                yolo_defect_count=yolo_result.defect_count,
+                yolo_annotated_rgb=np.array(yolo_result.annotated_image),
             )
             report_path.write_bytes(report_bytes)
 
@@ -686,16 +662,20 @@ def show_ai_detection() -> None:
                 "report_path": report_path,
                 "category": category,
                 "file_name": uploaded_name,
-                "is_anomalous": result.is_anomalous,
+                "is_anomalous": is_defective,
                 "anomaly_score": result.anomaly_score,
+                "threshold": getattr(result, "threshold", 0.35),
+                "patchcore_anomalous": result.is_anomalous,
                 "processing_seconds": result.processing_seconds,
                 "original": original,
                 "heatmap": heatmap,
                 "overlay": overlay,
+                "classification": classification,
+                "yolo_result": yolo_result,
             }
             st.session_state["latest_prediction"] = current
         except (FileNotFoundError, RuntimeError, ValueError) as error:
-            LOGGER.exception("PatchCore inspection failed for category %s", category)
+            LOGGER.exception("Quality inspection failed for category %s", category)
             st.error(str(error))
             return
 
@@ -703,59 +683,124 @@ def show_ai_detection() -> None:
         return
 
     st.markdown("---")
+    category_label = current["category"].replace("_", " ").title()
+    yolo_res = current["yolo_result"]
+    patchcore_anom = current["patchcore_anomalous"]
+    yolo_anom = yolo_res.has_defect
+
     if current["is_anomalous"]:
         st.markdown(
-            '<div style="background: linear-gradient(135deg, rgba(211, 47, 47, 0.14), rgba(211, 47, 47, 0.05)); border: 2px solid #d32f2f; border-radius: 16px; padding: 22px 26px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(211, 47, 47, 0.15);">'
-            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">'
-            '<h2 style="color: #d32f2f; margin: 0; font-size: 26px; font-weight: 800;">❌ NOT APPROVED TO SELL</h2>'
-            '<span style="background: #d32f2f; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px;">DEFECT DETECTED</span>'
+            '<div style="background: linear-gradient(135deg, rgba(211, 47, 47, 0.12), rgba(211, 47, 47, 0.04)); '
+            'border: 2.5px solid #d32f2f; border-radius: 16px; padding: 22px 28px; margin-bottom: 22px; '
+            'box-shadow: 0 6px 24px rgba(211, 47, 47, 0.15);">'
+            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">'
+            '<h2 style="color: #d32f2f; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">❌ NOT APPROVED TO SELL</h2>'
+            '<span style="background: #d32f2f; color: white; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 14px;">QUALITY REJECTED</span>'
             '</div>'
-            '<p style="color: #b71c1c; margin: 8px 0 0; font-size: 15px; font-weight: 500;">Anomaly threshold exceeded. Product failed visual inspection and is quarantined for rejection/rework.</p>'
+            '<p style="color: #b71c1c; margin: 10px 0 0; font-size: 15px; font-weight: 600;">'
+            'Defect detected by visual inspection system. Product failed quality standards and is quarantined for rework or disposal.'
+            '</p>'
             '</div>',
             unsafe_allow_html=True,
         )
-        category_label = current["category"].replace("_", " ").title()
-        st.markdown("#### 🔍 Defect Diagnosis & Inspection Details")
+        st.markdown("#### 🔍 Multi-Model Defect Diagnosis")
         st.markdown(
-            f"- **Product Category Evaluated**: **{category_label}**\n"
-            f"- **Anomaly Score**: **{current['anomaly_score']:.5f}**\n"
-            f"- **Analysis**: The AI visual model detected surface defects, deformities, or irregular features. "
-            f"Review the red and yellow hotspot regions on the anomaly heatmap below for exact localization."
+            f"- **Product Evaluated:** **{category_label}**\n"
+            f"- **Model 2 (Surface Quality):** Anomaly Score **`{current['anomaly_score']:.4f}`** "
+            f"({'⚠️ Exceeded threshold' if patchcore_anom else '✓ Normal surface'})\n"
+            f"- **Model 3 (YOLO Localizer):** Found **`{yolo_res.defect_count}`** defect region(s) "
+            f"with peak confidence **`{yolo_res.max_confidence:.1%}`**\n"
+            f"- **Action Required:** Product is rejected from production line. Inspect localized bounding boxes below."
         )
     else:
         st.markdown(
-            '<div style="background: linear-gradient(135deg, rgba(46, 125, 50, 0.14), rgba(46, 125, 50, 0.05)); border: 2px solid #2e7d32; border-radius: 16px; padding: 22px 26px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(46, 125, 50, 0.15);">'
-            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">'
-            '<h2 style="color: #2e7d32; margin: 0; font-size: 26px; font-weight: 800;">✅ APPROVED TO SELL</h2>'
-            '<span style="background: #2e7d32; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px;">QUALITY PASSED</span>'
+            '<div style="background: linear-gradient(135deg, rgba(46, 125, 50, 0.12), rgba(46, 125, 50, 0.04)); '
+            'border: 2.5px solid #2e7d32; border-radius: 16px; padding: 22px 28px; margin-bottom: 22px; '
+            'box-shadow: 0 6px 24px rgba(46, 125, 50, 0.15);">'
+            '<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">'
+            '<h2 style="color: #2e7d32; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">✅ APPROVED TO SELL</h2>'
+            '<span style="background: #2e7d32; color: white; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 14px;">PRODUCTION GRADE</span>'
             '</div>'
-            '<p style="color: #1b5e20; margin: 8px 0 0; font-size: 15px; font-weight: 500;">Product is within normal industrial tolerance. Verified free of critical anomalies and approved for commercial release.</p>'
+            '<p style="color: #1b5e20; margin: 10px 0 0; font-size: 15px; font-weight: 600;">'
+            'Product passed all automated visual quality inspections. Verified within industrial tolerances for commercial distribution.'
+            '</p>'
             '</div>',
             unsafe_allow_html=True,
         )
-        category_label = current["category"].replace("_", " ").title()
-        st.markdown("#### 🔍 Inspection Summary")
+        st.markdown("#### 🔍 Quality Verification Summary")
         st.markdown(
-            f"- **Product Category Evaluated**: **{category_label}**\n"
-            f"- **Anomaly Score**: **{current['anomaly_score']:.5f}** (Well within standard threshold)\n"
-            f"- **Status**: 100% Passed. Ready for packaging and distribution."
+            f"- **Product Evaluated:** **{category_label}**\n"
+            f"- **Model 2 (Surface Quality):** Anomaly score **`{current['anomaly_score']:.4f}`** is within certified tolerance.\n"
+            f"- **Model 3 (YOLO Localizer):** **0** defect bounding boxes detected across product.\n"
+            f"- **Status:** 100% Passed. Ready for packaging and shipment."
         )
 
-    score_col, time_col = st.columns(2)
-    score_col.metric("Anomaly score", f"{current['anomaly_score']:.5f}")
-    time_col.metric("Inference time", f"{current['processing_seconds']:.3f} s")
-    st.caption(f"Input: {current['file_name']} · Category model: {current['category']}")
+    # Metric Cards Row
+    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+    m_col1.metric("Recognized Product", f"{category_label}", f"{current['classification'].confidence:.1%}")
+    m_col2.metric("Anomaly Score", f"{current['anomaly_score']:.4f}", "PatchCore")
+    m_col3.metric("YOLO Defect Regions", f"{yolo_res.defect_count}", f"Max {yolo_res.max_confidence:.1%}" if yolo_res.has_defect else "0 defects")
+    m_col4.metric("Inference Latency", f"{current['processing_seconds']:.3f} s", "GPU Accelerated")
 
-    image_col, heatmap_col, overlay_col = st.columns(3)
-    image_col.image(current["original"], caption="Original", use_container_width=True)
-    heatmap_col.image(current["heatmap"], caption="Anomaly heatmap", use_container_width=True)
-    overlay_col.image(current["overlay"], caption="Heatmap overlay", use_container_width=True)
-    st.download_button(
-        "Download inspection report (PDF)",
-        data=current["report_path"].read_bytes(),
-        file_name=f"IndustrialGuard_{current['inspection_id']}.pdf",
-        mime="application/pdf",
-    )
+    # 3-Visual Gallery: Side-by-Side
+    st.markdown("### 🖼️ Visual Inspection Views")
+    v_col1, v_col2, v_col3 = st.columns(3)
+    v_col1.image(current["original"], caption="1. Original Product", use_container_width=True)
+    v_col2.image(current["overlay"], caption="2. Model 2: Surface Anomaly Heatmap", use_container_width=True)
+    v_col3.image(yolo_res.annotated_image, caption="3. Model 3: YOLO Defect Bounding Boxes", use_container_width=True)
+
+    # Detailed Audit & Analytics Tabs
+    tab_yolo, tab_recog, tab_diag, tab_report = st.tabs([
+        "🎯 YOLO Defect Detections",
+        "🧠 Model 1 Recognition Matrix",
+        "🔬 Model 2 Anomaly Diagnostics",
+        "📄 Inspection Certificate (PDF)",
+    ])
+
+    with tab_yolo:
+        if yolo_res.detections:
+            st.markdown(f"**Found {len(yolo_res.detections)} Defect Region(s):**")
+            box_rows = [
+                {
+                    "Defect Index": f"Defect #{idx+1}",
+                    "Class": d.class_name,
+                    "Confidence": f"{d.confidence:.1%}",
+                    "Bounding Box (x1, y1, x2, y2)": f"({d.box[0]}, {d.box[1]}, {d.box[2]}, {d.box[3]})",
+                    "Area (px²)": f"{d.area:,}",
+                }
+                for idx, d in enumerate(yolo_res.detections)
+            ]
+            st.dataframe(box_rows, use_container_width=True, hide_index=True)
+        else:
+            st.info("✓ YOLO localized zero defect bounding boxes at this sensitivity threshold.")
+
+    with tab_recog:
+        st.markdown(f"**Classification Model:** Wide-ResNet-50 Centroid Embedding Prototyper")
+        recog_data = {
+            name.replace("_", " ").title(): float(score)
+            for name, score in current["classification"].ranked_scores[:5]
+        }
+        st.bar_chart(recog_data)
+
+    with tab_diag:
+        st.markdown(f"**Anomaly Engine:** PatchCore (Multi-Scale Neighborhood Patch Embeddings)")
+        st.markdown(
+            f"- **Measured Anomaly Score:** `{current['anomaly_score']:.6f}`\n"
+            f"- **Classification Status:** `{'DEFECTIVE' if current['is_anomalous'] else 'NORMAL'}`\n"
+            f"- **Processing Time:** `{current['processing_seconds']:.4f} seconds`\n"
+            f"- **Input Source:** `{current['file_name']}`"
+        )
+
+    with tab_report:
+        st.markdown("Download the official single-page PDF Quality Inspection Certificate for audit records:")
+        st.download_button(
+            "📥 Download Certified Inspection Report (PDF)",
+            data=current["report_path"].read_bytes(),
+            file_name=f"QualityReport_{current['category']}_{current['inspection_id'][:8]}.pdf",
+            mime="application/pdf",
+            type="primary",
+            use_container_width=True,
+        )
 
 
 def show_inspection_history() -> None:

@@ -11,24 +11,23 @@ An end-to-end Computer Vision & Deep Learning inspection system for manufacturin
 
 ## 🌟 Key Features
 
-1. **Automated Product Classification (15 Categories)**
-   - Upload any industrial product image or capture via webcam.
-   - The embedded Wide-ResNet ensemble auto-identifies the product category (Cable, Bottle, Capsule, Screw, Metal Nut, Hazelnut, Carpet, Grid, Leather, Pill, Tile, Toothbrush, Transistor, Wood, Zipper).
-   - Automatically routes the image to the corresponding category-specific anomaly model.
+1. **3-Model Industrial AI Architecture**
+   - **🧠 Model 1: Category Recognition Engine (Wide-ResNet-50 Prototypes)**: Instantly classifies any uploaded or webcam product image across 15 industrial classes with top-1 and top-5 confidence scores.
+   - **🔬 Model 2: Surface Quality & Anomaly Analyzer (PatchCore)**: Extracts multi-scale neighborhood patch features, calculates calibrated anomaly scores against normal references, and generates high-resolution pixel defect heatmaps.
+   - **🎯 Model 3: Defect Localizer (Ultralytics YOLOv11)**: Detects and draws precise defect bounding boxes with bounding box coordinates, defect classes, and instance confidence ratings.
 
-2. **Accurate Anomaly & Defect Inspection (PatchCore)**
-   - Trained on defect-free reference images with memory-bank patch representations.
-   - Computes distance-based anomaly scores and generates high-resolution heatmaps pinpointing defect regions.
+2. **Actionable Commercial Quality Verdicts**
+   - **✅ APPROVED TO SELL**: Product passes all quality tolerance thresholds; confirmed zero defect bounding boxes and low anomaly score. Ready for commercial release.
+   - **❌ NOT APPROVED TO SELL**: Product fails inspection; highlights exact defect regions on both the anomaly heatmap and YOLO bounding box overlay.
 
-3. **Actionable Commercial Verdicts**
-   - **✅ APPROVED TO SELL**: Normal product meeting all quality tolerance thresholds.
-   - **❌ NOT APPROVED TO SELL**: Anomalous or defective product with a detailed **"🔍 What is wrong"** breakdown and localized heatmap.
+3. **1-Click Live Demo Samples**
+   - Quick testing with 9 preloaded industrial samples: Defective & Normal Cables, Bottles, Capsules, Metal Nuts, Screws, and Hazelnuts.
 
-4. **Supervised Defect Detector (Plastic Bottles - PBD)**
-   - Bounding-box defect detection for plastic bottle bodies and shoulders (covering stains, concavities, squeeze defects, pipe flaws, burrs).
+4. **Multi-View Visual Inspection Gallery**
+   - Side-by-side view of Original Product, Model 2 Surface Anomaly Heatmap (JET colormap), and Model 3 YOLO Defect Bounding Boxes.
 
 5. **Compliance & Reporting**
-   - Automatically generates formal PDF Inspection Reports with original, heatmap, and overlay images.
+   - Automatically generates formal PDF Inspection Certificates with original, heatmap, and YOLO detection panels.
    - SQLite persistent history tracking every inspection run with timestamps, scores, and processing times.
 
 ---

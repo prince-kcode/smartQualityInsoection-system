@@ -49,3 +49,4 @@ industrialguard_mlp/yolo11n.pt
 .idea/
 Thumbs.db
 Desktop.ini
+models/yolo_runs/**
