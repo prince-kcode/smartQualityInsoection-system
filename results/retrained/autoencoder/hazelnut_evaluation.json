@@ -1,0 +1,37 @@
+{
+  "category": "hazelnut",
+  "model": "CNN Autoencoder",
+  "seed": 42,
+  "epochs": 25,
+  "train_images": 352,
+  "validation_normal_images": 39,
+  "test_normal_images": 40,
+  "test_defect_images": 70,
+  "image_threshold": 0.0007040758663788432,
+  "pixel_threshold": 0.006093221716582775,
+  "image_auroc": 0.8717857142857142,
+  "image_average_precision": 0.930545392238773,
+  "image_precision": 1.0,
+  "image_recall": 0.32857142857142857,
+  "image_f1": 0.4946236559139785,
+  "pixel_auroc": 0.9238330425799443,
+  "pixel_average_precision": 0.462804654555047,
+  "pixel_precision": 0.586094218922761,
+  "pixel_recall": 0.3866050206752841,
+  "pixel_f1": 0.46589317314143786,
+  "confusion_matrix": [
+    [
+      40,
+      0
+    ],
+    [
+      47,
+      23
+    ]
+  ],
+  "training_seconds": 752.5886184999999,
+  "checkpoint_bytes": 5549167,
+  "device": "cuda",
+  "input_size": 256,
+  "threshold_source": "99th percentile of held-out normal validation images; 99.5th percentile of normal validation pixels"
+}

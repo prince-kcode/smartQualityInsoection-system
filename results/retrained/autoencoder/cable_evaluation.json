@@ -1,0 +1,37 @@
+{
+  "category": "cable",
+  "model": "CNN Autoencoder",
+  "seed": 42,
+  "epochs": 25,
+  "train_images": 202,
+  "validation_normal_images": 22,
+  "test_normal_images": 58,
+  "test_defect_images": 92,
+  "image_threshold": 0.0038911189371719952,
+  "pixel_threshold": 0.08349756896495819,
+  "image_auroc": 0.5001874062968515,
+  "image_average_precision": 0.6646679175618347,
+  "image_precision": 1.0,
+  "image_recall": 0.021739130434782608,
+  "image_f1": 0.0425531914893617,
+  "pixel_auroc": 0.5070134811469381,
+  "pixel_average_precision": 0.03361241099287171,
+  "pixel_precision": 0.0498323167300637,
+  "pixel_recall": 0.007844193206659415,
+  "pixel_f1": 0.013554714763251662,
+  "confusion_matrix": [
+    [
+      58,
+      0
+    ],
+    [
+      90,
+      2
+    ]
+  ],
+  "training_seconds": 249.55149749999964,
+  "checkpoint_bytes": 5548996,
+  "device": "cuda",
+  "input_size": 256,
+  "threshold_source": "99th percentile of held-out normal validation images; 99.5th percentile of normal validation pixels"
+}

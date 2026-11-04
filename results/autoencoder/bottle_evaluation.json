@@ -1,0 +1,37 @@
+{
+  "category": "bottle",
+  "model": "CNN Autoencoder",
+  "seed": 42,
+  "epochs": 25,
+  "train_images": 188,
+  "validation_normal_images": 21,
+  "test_normal_images": 20,
+  "test_defect_images": 63,
+  "image_threshold": 0.0009669970953837038,
+  "pixel_threshold": 0.012145284563302994,
+  "image_auroc": 0.7095238095238094,
+  "image_average_precision": 0.9018500993645502,
+  "image_precision": 0.9333333333333333,
+  "image_recall": 0.4444444444444444,
+  "image_f1": 0.6021505376344086,
+  "pixel_auroc": 0.6293508029421999,
+  "pixel_average_precision": 0.13603530981461165,
+  "pixel_precision": 0.33427059578896096,
+  "pixel_recall": 0.04802407247188152,
+  "pixel_f1": 0.08398252264630053,
+  "confusion_matrix": [
+    [
+      18,
+      2
+    ],
+    [
+      35,
+      28
+    ]
+  ],
+  "training_seconds": 132.55735910000112,
+  "checkpoint_bytes": 5549053,
+  "device": "cuda",
+  "input_size": 256,
+  "threshold_source": "99th percentile of held-out normal validation images; 99.5th percentile of normal validation pixels"
+}

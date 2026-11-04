@@ -1,0 +1,37 @@
+{
+  "category": "grid",
+  "model": "CNN Autoencoder",
+  "seed": 42,
+  "epochs": 25,
+  "train_images": 238,
+  "validation_normal_images": 26,
+  "test_normal_images": 21,
+  "test_defect_images": 57,
+  "image_threshold": 0.002739563293289393,
+  "pixel_threshold": 0.016930777579545975,
+  "image_auroc": 0.8387635756056808,
+  "image_average_precision": 0.9456129884883193,
+  "image_precision": 1.0,
+  "image_recall": 0.22807017543859648,
+  "image_f1": 0.37142857142857144,
+  "pixel_auroc": 0.6762034179519756,
+  "pixel_average_precision": 0.030580940865058727,
+  "pixel_precision": 0.07741504390988926,
+  "pixel_recall": 0.09179659865870568,
+  "pixel_f1": 0.08399466618334347,
+  "confusion_matrix": [
+    [
+      21,
+      0
+    ],
+    [
+      44,
+      13
+    ]
+  ],
+  "training_seconds": 148.07457199999953,
+  "checkpoint_bytes": 5548939,
+  "device": "cuda",
+  "input_size": 256,
+  "threshold_source": "99th percentile of held-out normal validation images; 99.5th percentile of normal validation pixels"
+}

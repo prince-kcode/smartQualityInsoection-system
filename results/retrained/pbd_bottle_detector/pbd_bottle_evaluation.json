@@ -1,0 +1,64 @@
+{
+  "map50": 0.3549331507577442,
+  "per_class": {
+    "body_stain": {
+      "ground_truth_boxes": 372,
+      "detections_at_score_0_05": 2316,
+      "ap50": 0.04239287692755257,
+      "precision_all_ranked": 0.04317789291882556,
+      "recall_all_ranked": 0.26881720430107525
+    },
+    "body_concave": {
+      "ground_truth_boxes": 222,
+      "detections_at_score_0_05": 1124,
+      "ap50": 0.06534498589478299,
+      "precision_all_ranked": 0.051601423487544484,
+      "recall_all_ranked": 0.26126126126126126
+    },
+    "body_score": {
+      "ground_truth_boxes": 68,
+      "detections_at_score_0_05": 441,
+      "ap50": 0.07962676130692621,
+      "precision_all_ranked": 0.045351473922902494,
+      "recall_all_ranked": 0.29411764705882354
+    },
+    "body_squeeze": {
+      "ground_truth_boxes": 27,
+      "detections_at_score_0_05": 101,
+      "ap50": 0.20161580036005364,
+      "precision_all_ranked": 0.1485148514851485,
+      "recall_all_ranked": 0.5555555555555556
+    },
+    "shoulder_pipe": {
+      "ground_truth_boxes": 693,
+      "detections_at_score_0_05": 696,
+      "ap50": 1.0,
+      "precision_all_ranked": 0.9956896551724138,
+      "recall_all_ranked": 1.0
+    },
+    "shoulder_no_burr": {
+      "ground_truth_boxes": 432,
+      "detections_at_score_0_05": 622,
+      "ap50": 0.9669581468804423,
+      "precision_all_ranked": 0.6945337620578779,
+      "recall_all_ranked": 1.0
+    },
+    "shoulder_stain": {
+      "ground_truth_boxes": 251,
+      "detections_at_score_0_05": 855,
+      "ap50": 0.1285934839344516,
+      "precision_all_ranked": 0.09005847953216374,
+      "recall_all_ranked": 0.30677290836653387
+    }
+  },
+  "model": "Faster R-CNN MobileNetV3 FPN",
+  "dataset": "PBD plastic bottle body and shoulder",
+  "train_images": 3170,
+  "validation_images": 793,
+  "epochs": 3,
+  "seed": 42,
+  "device": "cuda",
+  "training_seconds": 462.40564129999984,
+  "checkpoint_bytes": 76148173,
+  "evaluation": "validation split, AP@IoU=0.50; not an independent test set"
+}

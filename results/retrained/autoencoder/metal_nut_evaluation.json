@@ -1,0 +1,37 @@
+{
+  "category": "metal_nut",
+  "model": "CNN Autoencoder",
+  "seed": 42,
+  "epochs": 25,
+  "train_images": 198,
+  "validation_normal_images": 22,
+  "test_normal_images": 22,
+  "test_defect_images": 93,
+  "image_threshold": 0.0012887961405795066,
+  "pixel_threshold": 0.015420951880514622,
+  "image_auroc": 0.2678396871945259,
+  "image_average_precision": 0.6893265047559036,
+  "image_precision": 0.25,
+  "image_recall": 0.021505376344086023,
+  "image_f1": 0.039603960396039604,
+  "pixel_auroc": 0.7058775703410248,
+  "pixel_average_precision": 0.1839966693859546,
+  "pixel_precision": 0.1697293877433641,
+  "pixel_recall": 0.006683850042580949,
+  "pixel_f1": 0.012861231841028027,
+  "confusion_matrix": [
+    [
+      16,
+      6
+    ],
+    [
+      91,
+      2
+    ]
+  ],
+  "training_seconds": 116.90555479999966,
+  "checkpoint_bytes": 5549224,
+  "device": "cuda",
+  "input_size": 256,
+  "threshold_source": "99th percentile of held-out normal validation images; 99.5th percentile of normal validation pixels"
+}
