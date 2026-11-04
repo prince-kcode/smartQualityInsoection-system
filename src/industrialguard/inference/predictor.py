@@ -53,8 +53,11 @@ def load_predictor(category: str, results_root: Path | None = None) -> LoadedPre
         # Fallback to lightweight cloud inference
         return LoadedPredictor(category, None, None, None)
 
-    from anomalib.engine import Engine
-    from anomalib.models import Patchcore
+    try:
+        from anomalib.engine import Engine
+        from anomalib.models import Patchcore
+    except ImportError:
+        return LoadedPredictor(category, None, None, None)
 
     model = Patchcore(
         backbone="wide_resnet50_2",
