@@ -101,8 +101,11 @@ if st.session_state["dark_mode"]:
         "ink": "#f1f5f9", "muted": "#94a3b8", "teal": "#00f0ff", "line": "#1e293b",
         "app": "#070b14", "surface": "#0f172a", "sidebar": "#090d16",
         "side_text": "#f8fafc", "side_sub": "#64748b", "side_label": "#00f0ff",
-        "field": "#111827", "shadow": "rgba(0, 0, 0, 0.65)", "hero_a": "#0d1527",
-        "hero_b": "#081d30", "hero_ink": "#ffffff", "hero_muted": "#94a3b8",
+        "field": "#111827", "shadow": "rgba(0, 0, 0, 0.65)", "hero_a": "rgba(13, 21, 39, 0.95)",
+        "hero_b": "rgba(8, 29, 48, 0.95)", "hero_ink": "#ffffff", "hero_muted": "#94a3b8",
+        "telemetry_bg": "rgba(15, 23, 42, 0.88)", "monitor_bg": "#090e18",
+        "card_bg": "rgba(15, 23, 42, 0.85)", "card_border": "rgba(0, 240, 255, 0.25)",
+        "card_ink": "#ffffff", "card_muted": "#94a3b8",
     }
 else:
     theme_colors = {
@@ -110,7 +113,10 @@ else:
         "app": "#f8fafc", "surface": "#ffffff", "sidebar": "#f1f5f9",
         "side_text": "#0f172a", "side_sub": "#64748b", "side_label": "#0284c7",
         "field": "#ffffff", "shadow": "rgba(15, 23, 42, 0.08)", "hero_a": "#e0f2fe",
-        "hero_b": "#e2e8f0", "hero_ink": "#0f172a", "hero_muted": "#334155",
+        "hero_b": "#f1f5f9", "hero_ink": "#0f172a", "hero_muted": "#334155",
+        "telemetry_bg": "#ffffff", "monitor_bg": "#ffffff",
+        "card_bg": "#ffffff", "card_border": "#cbd5e1",
+        "card_ink": "#0f172a", "card_muted": "#64748b",
     }
 
 theme_css = """
@@ -123,6 +129,9 @@ theme_css = """
         --side-text:__SIDE_TEXT__; --side-sub:__SIDE_SUB__; --side-label:__SIDE_LABEL__;
         --field:__FIELD__; --shadow:__SHADOW__; --hero-a:__HERO_A__; --hero-b:__HERO_B__;
         --hero-ink:__HERO_INK__; --hero-muted:__HERO_MUTED__;
+        --telemetry-bg:__TELEMETRY_BG__; --monitor-bg:__MONITOR_BG__;
+        --card-bg:__CARD_BG__; --card-border:__CARD_BORDER__;
+        --card-ink:__CARD_INK__; --card-muted:__CARD_MUTED__;
       }
 
       html, body, [class*="css"] {
@@ -164,18 +173,18 @@ theme_css = """
         flex-wrap: wrap;
         gap: 10px;
         padding: 9px 18px;
-        background: rgba(15, 23, 42, 0.88);
-        border: 1px solid rgba(0, 240, 255, 0.22);
+        background: var(--telemetry-bg);
+        border: 1px solid var(--line);
         border-radius: 8px;
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
         letter-spacing: 0.06em;
-        color: #94a3b8;
+        color: var(--muted);
         margin-bottom: 20px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 4px 18px var(--shadow);
       }
       .ind-telemetry-item { display: flex; align-items: center; }
-      .ind-telemetry-item strong { color: #f8fafc; margin-left: 5px; font-weight: 700; }
+      .ind-telemetry-item strong { color: var(--ink); margin-left: 5px; font-weight: 700; }
       
       @keyframes pulse-green {
         0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8); }
@@ -189,16 +198,16 @@ theme_css = """
       }
       .ind-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 7px; }
       .ind-dot-green { background: #10b981; animation: pulse-green 2s infinite; }
-      .ind-dot-cyan { background: #00f0ff; animation: pulse-cyan 2s infinite; }
+      .ind-dot-cyan { background: var(--teal); animation: pulse-cyan 2s infinite; }
 
       /* Industrial Hero Header */
       .ig-hero {
         position: relative;
         padding: 24px 28px;
         margin: 0 0 22px;
-        border: 1px solid rgba(0, 240, 255, 0.25);
+        border: 1px solid var(--line);
         border-radius: 12px;
-        background: linear-gradient(135deg, rgba(13, 21, 39, 0.95), rgba(8, 29, 48, 0.95));
+        background: linear-gradient(135deg, var(--hero-a), var(--hero-b));
         box-shadow: 0 10px 32px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         overflow: hidden;
       }
@@ -206,7 +215,7 @@ theme_css = """
         content: '';
         position: absolute;
         top: 0; left: 0; right: 0; height: 3px;
-        background: linear-gradient(90deg, #00f0ff, #3b82f6, #10b981);
+        background: linear-gradient(90deg, var(--teal), #3b82f6, #10b981);
       }
       .ig-eyebrow {
         font-family: 'JetBrains Mono', monospace;
@@ -336,21 +345,21 @@ theme_css = """
 
       /* Visual Monitors */
       .ind-monitor {
-        background: #090e18;
-        border: 1px solid rgba(0, 240, 255, 0.25);
+        background: var(--monitor-bg);
+        border: 1px solid var(--line);
         border-radius: 10px;
         overflow: hidden;
         margin-bottom: 12px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 6px 20px var(--shadow);
       }
       .ind-monitor-header {
-        background: rgba(0, 240, 255, 0.08);
-        border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+        background: rgba(0, 180, 216, 0.08);
+        border-bottom: 1px solid var(--line);
         padding: 7px 12px;
         font-family: 'JetBrains Mono', monospace;
         font-size: 11px;
         font-weight: 700;
-        color: #00f0ff;
+        color: var(--teal);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -358,10 +367,101 @@ theme_css = """
       }
       .ind-monitor-header span.tag {
         font-size: 10px;
-        background: rgba(0, 240, 255, 0.15);
+        background: rgba(0, 180, 216, 0.15);
         padding: 2px 7px;
         border-radius: 4px;
-        color: #e0f2fe;
+        color: var(--ink);
+      }
+
+      /* 3-Engine Industrial Cockpit Cards */
+      .ind-engine-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        padding: 14px 18px;
+        box-shadow: 0 4px 16px var(--shadow);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .ind-engine-card:hover {
+        border-color: var(--teal);
+        transform: translateY(-2px);
+      }
+      .ind-engine-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: var(--teal);
+        letter-spacing: 0.1em;
+        font-weight: 700;
+      }
+      .ind-engine-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--card-ink);
+        margin: 4px 0 2px;
+      }
+      .ind-engine-desc {
+        font-size: 12px;
+        color: var(--card-muted);
+        line-height: 1.4;
+      }
+
+      /* Sidebar Terminal Card */
+      .ind-sidebar-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        font-family: 'JetBrains Mono', monospace;
+        box-shadow: 0 2px 8px var(--shadow);
+      }
+
+      /* QA Verdict Callout Banners */
+      .ind-verdict-reject {
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        border-left: 6px solid #ef4444;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin: 18px 0;
+      }
+      .ind-verdict-reject h2 {
+        color: #dc2626 !important;
+        margin: 0;
+        font-size: 24px;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: -0.5px;
+      }
+      .ind-verdict-reject p {
+        color: var(--ink) !important;
+        opacity: 0.9;
+        margin: 8px 0 0;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .ind-verdict-pass {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        border-left: 6px solid #10b981;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin: 18px 0;
+      }
+      .ind-verdict-pass h2 {
+        color: #059669 !important;
+        margin: 0;
+        font-size: 24px;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        letter-spacing: -0.5px;
+      }
+      .ind-verdict-pass p {
+        color: var(--ink) !important;
+        opacity: 0.9;
+        margin: 8px 0 0;
+        font-size: 13px;
+        font-weight: 500;
       }
 
       /* Tab and Dataframe Styling */
@@ -399,6 +499,9 @@ for token, value in {
     "FIELD": theme_colors["field"], "SHADOW": theme_colors["shadow"],
     "HERO_A": theme_colors["hero_a"], "HERO_B": theme_colors["hero_b"],
     "HERO_INK": theme_colors["hero_ink"], "HERO_MUTED": theme_colors["hero_muted"],
+    "TELEMETRY_BG": theme_colors["telemetry_bg"], "MONITOR_BG": theme_colors["monitor_bg"],
+    "CARD_BG": theme_colors["card_bg"], "CARD_BORDER": theme_colors["card_border"],
+    "CARD_INK": theme_colors["card_ink"], "CARD_MUTED": theme_colors["card_muted"],
 }.items():
     theme_css = theme_css.replace(f"__{token}__", value)
 st.markdown(theme_css, unsafe_allow_html=True)
@@ -464,35 +567,38 @@ def show_dashboard() -> None:
     st.markdown("### 🏭 Industrial Vision Architecture")
     arch1, arch2, arch3 = st.columns(3)
     with arch1:
-        with st.container(border=True):
-            st.markdown(
-                """
-                <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#00f0ff; font-weight:700;">ENGINE 01 // CLASSIFIER</div>
-                <div style="font-size:16px; font-weight:800; margin:4px 0;">Wide-ResNet Prototypes</div>
-                <div style="font-size:12px; color:#94a3b8;">Extracts deep manifold features to classify products into 15 industrial categories with confidence distribution.</div>
-                """,
-                unsafe_allow_html=True,
-            )
+        st.markdown(
+            """
+            <div class="ind-engine-card">
+              <div class="ind-engine-tag">ENGINE 01 // CLASSIFIER</div>
+              <div class="ind-engine-title">Wide-ResNet Prototypes</div>
+              <div class="ind-engine-desc">Extracts deep manifold features to classify products into 15 industrial categories with confidence distribution.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     with arch2:
-        with st.container(border=True):
-            st.markdown(
-                """
-                <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#00f0ff; font-weight:700;">ENGINE 02 // ANALYZER</div>
-                <div style="font-size:16px; font-weight:800; margin:4px 0;">PatchCore Memory Manifold</div>
-                <div style="font-size:12px; color:#94a3b8;">Detects micro-cracks, surface fractures, and scratches against normal reference distributions via pixel heatmaps.</div>
-                """,
-                unsafe_allow_html=True,
-            )
+        st.markdown(
+            """
+            <div class="ind-engine-card">
+              <div class="ind-engine-tag">ENGINE 02 // ANALYZER</div>
+              <div class="ind-engine-title">PatchCore Memory Manifold</div>
+              <div class="ind-engine-desc">Detects micro-cracks, surface fractures, and scratches against normal reference distributions via pixel heatmaps.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     with arch3:
-        with st.container(border=True):
-            st.markdown(
-                """
-                <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#00f0ff; font-weight:700;">ENGINE 03 // YOLO LOCALIZER</div>
-                <div style="font-size:16px; font-weight:800; margin:4px 0;">Ultralytics YOLOv11</div>
-                <div style="font-size:12px; color:#94a3b8;">Real-time spatial bounding-box defect localizer operating at 1.8ms inference latency with 81.8% box precision.</div>
-                """,
-                unsafe_allow_html=True,
-            )
+        st.markdown(
+            """
+            <div class="ind-engine-card">
+              <div class="ind-engine-tag">ENGINE 03 // YOLO LOCALIZER</div>
+              <div class="ind-engine-title">Ultralytics YOLOv11</div>
+              <div class="ind-engine-desc">Real-time spatial bounding-box defect localizer operating at 1.8ms inference latency with 81.8% box precision.</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     recent = list_inspections(limit=6)
     if recent:
@@ -696,20 +802,20 @@ def show_ai_detection() -> None:
     st.markdown(
         """
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 22px;">
-          <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 10px; padding: 14px 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #00f0ff; letter-spacing: 0.1em; font-weight: 700;">ENGINE 01 // CLASSIFIER</div>
-            <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 4px 0 2px;">Wide-ResNet-50 Prototypes</div>
-            <div style="font-size: 12px; color: #94a3b8;">Automatic category identification & confidence ranking across 15 industrial classes.</div>
+          <div class="ind-engine-card">
+            <div class="ind-engine-tag">ENGINE 01 // CLASSIFIER</div>
+            <div class="ind-engine-title">Wide-ResNet-50 Prototypes</div>
+            <div class="ind-engine-desc">Automatic category identification & confidence ranking across 15 industrial classes.</div>
           </div>
-          <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 10px; padding: 14px 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #00f0ff; letter-spacing: 0.1em; font-weight: 700;">ENGINE 02 // SPECTROMETRY</div>
-            <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 4px 0 2px;">PatchCore Anomaly Engine</div>
-            <div style="font-size: 12px; color: #94a3b8;">Deep patch memory manifold for micro-surface fracture scoring & JET heatmap projection.</div>
+          <div class="ind-engine-card">
+            <div class="ind-engine-tag">ENGINE 02 // SPECTROMETRY</div>
+            <div class="ind-engine-title">PatchCore Anomaly Engine</div>
+            <div class="ind-engine-desc">Deep patch memory manifold for micro-surface fracture scoring & JET heatmap projection.</div>
           </div>
-          <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 10px; padding: 14px 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #00f0ff; letter-spacing: 0.1em; font-weight: 700;">ENGINE 03 // YOLO LOCALIZER</div>
-            <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 4px 0 2px;">Ultralytics YOLOv11</div>
-            <div style="font-size: 12px; color: #94a3b8;">Real-time spatial bounding-box defect localizer operating at 1.8ms inference latency.</div>
+          <div class="ind-engine-card">
+            <div class="ind-engine-tag">ENGINE 03 // YOLO LOCALIZER</div>
+            <div class="ind-engine-title">Ultralytics YOLOv11</div>
+            <div class="ind-engine-desc">Real-time spatial bounding-box defect localizer operating at 1.8ms inference latency.</div>
           </div>
         </div>
         """,
@@ -800,9 +906,9 @@ def show_ai_detection() -> None:
     with ctrl_col2:
         yolo_conf = st.slider(
             "YOLO Defect Confidence Threshold",
-            min_value=0.05,
+            min_value=0.10,
             max_value=0.90,
-            value=0.50,
+            value=0.65,
             step=0.05,
             help="Adjust the bounding-box sensitivity threshold for YOLO defect localization.",
         )
@@ -824,8 +930,8 @@ def show_ai_detection() -> None:
         category = classification.category
         st.markdown(
             f"""
-            <div style="background: rgba(0, 240, 255, 0.08); border-left: 3px solid #00f0ff; padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px;">
-              <span style="color: #00f0ff; font-weight: 700;">[SPECIMEN IDENTIFIED]</span> CATEGORY: <strong>{category.replace('_', ' ').title()}</strong> // CONFIDENCE: <strong>{classification.confidence:.1%}</strong>
+            <div style="background: rgba(0, 180, 216, 0.08); border-left: 3px solid var(--teal); padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
+              <span style="color: var(--teal); font-weight: 700;">[SPECIMEN IDENTIFIED]</span> CATEGORY: <strong>{category.replace('_', ' ').title()}</strong> // CONFIDENCE: <strong>{classification.confidence:.1%}</strong>
             </div>
             """,
             unsafe_allow_html=True,
@@ -835,7 +941,7 @@ def show_ai_detection() -> None:
         if category != classification.category:
             st.markdown(
                 f"""
-                <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px;">
+                <div style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
                   <span style="color: #f59e0b; font-weight: 700;">[MANUAL OVERRIDE]</span> CATEGORY: <strong>{category.replace('_', ' ').title()}</strong> (Auto-suggest: {classification.category.replace('_', ' ').title()} at {classification.confidence:.1%})
                 </div>
                 """,
@@ -844,9 +950,12 @@ def show_ai_detection() -> None:
         else:
             st.markdown(
                 f"""
-                <div style="background: rgba(0, 240, 255, 0.08); border-left: 3px solid #00f0ff; padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px;">
-                  <span style="color: #00f0ff; font-weight: 700;">[CONFIRMED SPEC]</span> CATEGORY: <strong>{category.replace('_', ' ').title()}</strong> // CONFIDENCE: <strong>{classification.confidence:.1%}</strong>
+                <div style="background: rgba(0, 180, 216, 0.08); border-left: 3px solid var(--teal); padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
+                  <span style="color: var(--teal); font-weight: 700;">[CONFIRMED SPEC]</span> CATEGORY: <strong>{category.replace('_', ' ').title()}</strong> // CONFIDENCE: <strong>{classification.confidence:.1%}</strong>
                 </div>
+                """,
+                unsafe_allow_html=True,
+            )
                 """,
                 unsafe_allow_html=True,
             )
@@ -973,14 +1082,14 @@ def show_ai_detection() -> None:
             """
             <div class="ind-verdict-reject">
               <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                <h2 style="color: #ef4444; margin: 0; font-size: 26px; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.5px;">
+                <h2>
                   ❌ NOT APPROVED TO SELL // QA GATE: REJECTED
                 </h2>
                 <span style="background: #ef4444; color: white; padding: 5px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;">
                   QUARANTINED [ERR-DEFECT-DETECTED]
                 </span>
               </div>
-              <p style="color: #fca5a5; margin: 8px 0 0; font-size: 14px; font-weight: 500;">
+              <p>
                 Component failed automated visual metrology. Surface anomaly threshold exceeded or spatial defect localized. Automated diverter engaged for scrap/rework.
               </p>
             </div>
@@ -1001,14 +1110,14 @@ def show_ai_detection() -> None:
             """
             <div class="ind-verdict-pass">
               <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                <h2 style="color: #10b981; margin: 0; font-size: 26px; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.5px;">
+                <h2>
                   ✅ APPROVED TO SELL // QA GATE: PASSED
                 </h2>
                 <span style="background: #10b981; color: white; padding: 5px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;">
                   RELEASE AUTHORIZED [PRODUCTION GRADE]
                 </span>
               </div>
-              <p style="color: #86efac; margin: 8px 0 0; font-size: 14px; font-weight: 500;">
+              <p>
                 100% of surface and dimensional parameters are verified within certified manufacturing tolerance. Product approved for high-speed packaging and commercial release.
               </p>
             </div>
@@ -1192,10 +1301,10 @@ st.sidebar.markdown(
         <div class="ig-brand-sub">AUTONOMOUS VISION QA</div>
       </div>
     </div>
-    <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace;">
-      <div style="color: #64748b; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;">CELL HARDWARE</div>
-      <div style="color: #00f0ff; font-weight: 700; font-size: 11px; margin: 2px 0;">CUDA RTX 4060 · 8GB</div>
-      <div style="color: #94a3b8; font-size: 10px;">CYCLE: 1.8ms · 120 FPS</div>
+    <div class="ind-sidebar-card">
+      <div style="color: var(--side-sub); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;">CELL HARDWARE</div>
+      <div style="color: var(--teal); font-weight: 700; font-size: 11px; margin: 2px 0;">CUDA RTX 4060 · 8GB</div>
+      <div style="color: var(--muted); font-size: 10px;">CYCLE: 1.8ms · 120 FPS</div>
       <div style="color: #10b981; font-size: 10px; margin-top: 4px; display: flex; align-items: center;">
         <span class="ind-dot ind-dot-green"></span> STATION: ONLINE
       </div>

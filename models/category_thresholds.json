@@ -1,77 +1,77 @@
 {
   "bottle": {
-    "threshold": 0.0652,
-    "avg_normal_distance": 0.0247,
-    "avg_defect_distance": 0.1259
+    "threshold": 0.052,
+    "avg_normal": 0.025,
+    "max_normal": 0.043
   },
   "cable": {
-    "threshold": 0.1246,
-    "avg_normal_distance": 0.1013,
-    "avg_defect_distance": 0.1596
+    "threshold": 0.165,
+    "avg_normal": 0.111,
+    "max_normal": 0.155
   },
   "capsule": {
-    "threshold": 0.0331,
-    "avg_normal_distance": 0.025,
-    "avg_defect_distance": 0.0451
+    "threshold": 0.055,
+    "avg_normal": 0.027,
+    "max_normal": 0.05
   },
   "carpet": {
-    "threshold": 0.0819,
-    "avg_normal_distance": 0.0695,
-    "avg_defect_distance": 0.1004
+    "threshold": 0.125,
+    "avg_normal": 0.084,
+    "max_normal": 0.115
   },
   "grid": {
-    "threshold": 0.1431,
-    "avg_normal_distance": 0.1647,
-    "avg_defect_distance": 0.1107
+    "threshold": 0.25,
+    "avg_normal": 0.168,
+    "max_normal": 0.22
   },
   "hazelnut": {
-    "threshold": 0.1604,
-    "avg_normal_distance": 0.1071,
-    "avg_defect_distance": 0.2404
+    "threshold": 0.21,
+    "avg_normal": 0.121,
+    "max_normal": 0.2
   },
   "leather": {
-    "threshold": 0.0208,
-    "avg_normal_distance": 0.0122,
-    "avg_defect_distance": 0.0337
+    "threshold": 0.025,
+    "avg_normal": 0.012,
+    "max_normal": 0.02
   },
   "metal_nut": {
-    "threshold": 0.0457,
-    "avg_normal_distance": 0.0444,
-    "avg_defect_distance": 0.0477
+    "threshold": 0.08,
+    "avg_normal": 0.041,
+    "max_normal": 0.075
   },
   "pill": {
-    "threshold": 0.0445,
-    "avg_normal_distance": 0.0445,
-    "avg_defect_distance": 0.0445
+    "threshold": 0.075,
+    "avg_normal": 0.039,
+    "max_normal": 0.065
   },
   "screw": {
-    "threshold": 0.099,
-    "avg_normal_distance": 0.0917,
-    "avg_defect_distance": 0.1101
+    "threshold": 0.185,
+    "avg_normal": 0.085,
+    "max_normal": 0.18
   },
   "tile": {
-    "threshold": 0.192,
-    "avg_normal_distance": 0.0685,
-    "avg_defect_distance": 0.3771
+    "threshold": 0.21,
+    "avg_normal": 0.063,
+    "max_normal": 0.2
   },
   "toothbrush": {
-    "threshold": 0.0779,
-    "avg_normal_distance": 0.0605,
-    "avg_defect_distance": 0.1039
+    "threshold": 0.085,
+    "avg_normal": 0.06,
+    "max_normal": 0.08
   },
   "transistor": {
-    "threshold": 0.0651,
-    "avg_normal_distance": 0.0582,
-    "avg_defect_distance": 0.0754
+    "threshold": 0.075,
+    "avg_normal": 0.054,
+    "max_normal": 0.065
   },
   "wood": {
-    "threshold": 0.1641,
-    "avg_normal_distance": 0.0793,
-    "avg_defect_distance": 0.2912
+    "threshold": 0.12,
+    "avg_normal": 0.074,
+    "max_normal": 0.11
   },
   "zipper": {
-    "threshold": 0.04,
-    "avg_normal_distance": 0.0253,
-    "avg_defect_distance": 0.0622
+    "threshold": 0.06,
+    "avg_normal": 0.03,
+    "max_normal": 0.052
   }
 }
