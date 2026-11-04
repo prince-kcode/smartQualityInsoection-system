@@ -218,3 +218,4 @@ def get_yolo_detector(model_path: Optional[Union[str, Path]] = None) -> Industri
     if _yolo_instance is None or (model_path and _yolo_instance.model_path != Path(model_path)):
         _yolo_instance = IndustrialYOLODetector(model_path)
     return _yolo_instance
+
