@@ -11,7 +11,7 @@ import numpy as np
 from industrialguard.data.mvtec import MVTEC_CATEGORIES
 
 
-SUPPORTED_CATEGORIES = MVTEC_CATEGORIES
+SUPPORTED_CATEGORIES = (*MVTEC_CATEGORIES, "spoon")
 
 
 @dataclass(frozen=True)

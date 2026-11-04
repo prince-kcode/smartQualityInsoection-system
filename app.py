@@ -832,6 +832,7 @@ def show_ai_detection() -> None:
 
     sample_dir = PROJECT_ROOT / "data" / "sample"
     sample_dict = {
+        "🥄 Specimen: Spoon (Cutlery Inspection)": "spoon_specimen.png",
         "🔌 Defective Cable (Bent Wire)": "cable_defective_bent_wire.png",
         "🔌 Normal Cable (Quality Passed)": "cable_normal.png",
         "🍼 Defective Bottle (Broken Body)": "bottle_defective_broken.png",
@@ -930,8 +931,8 @@ def show_ai_detection() -> None:
         category = classification.category
         st.markdown(
             f"""
-            <div style="background: rgba(0, 180, 216, 0.08); border-left: 3px solid var(--teal); padding: 10px 16px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
-              <span style="color: var(--teal); font-weight: 700;">[SPECIMEN IDENTIFIED]</span> CATEGORY: <strong>{category.replace('_', ' ').title()}</strong> // CONFIDENCE: <strong>{classification.confidence:.1%}</strong>
+            <div style="background: rgba(0, 180, 216, 0.08); border-left: 3px solid var(--teal); padding: 12px 18px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
+              <span style="color: var(--teal); font-weight: 700;">[OBJECT IDENTIFIED]</span> SPECIMEN: <strong>{classification.detected_object}</strong> // LINE: <strong>{category.replace('_', ' ').title()}</strong> // CONFIDENCE: <strong>{classification.confidence:.1%}</strong>
             </div>
             """,
             unsafe_allow_html=True,

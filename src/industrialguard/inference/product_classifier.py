@@ -39,6 +39,27 @@ class ClassificationResult(NamedTuple):
     ood_threshold: float
     is_ood: bool
     ranked_scores: list[tuple[str, float]]
+    detected_object: str = ""
+
+
+OBJECT_DESCRIPTIONS: dict[str, str] = {
+    "bottle": "Bottle (Industrial Container & Packaging)",
+    "cable": "Cable (Wiring Harness & Flexible Core)",
+    "capsule": "Capsule (Pharmaceutical Encapsulation)",
+    "carpet": "Carpet (Textile & Woven Substrate)",
+    "grid": "Grid (Precision Wire Mesh & Screen)",
+    "hazelnut": "Hazelnut (Agricultural Specimen)",
+    "leather": "Leather (Engineered Upholstery Material)",
+    "metal_nut": "Metal Nut (Precision Machined Fastener)",
+    "pill": "Pill (Pharmaceutical Compressed Tablet)",
+    "screw": "Screw (Threaded Fastener & Hardware)",
+    "tile": "Tile (Ceramic Structural Surface)",
+    "toothbrush": "Toothbrush (Consumer Hygiene Goods)",
+    "transistor": "Transistor (Semiconductor Micro-Package)",
+    "wood": "Wood (Natural Timber & Grain Board)",
+    "zipper": "Zipper (Mechanical Closure Fastener)",
+    "spoon": "Spoon (Cutlery & Tableware Specimen)",
+}
 
 
 def create_feature_model():
@@ -96,7 +117,7 @@ def classify_product_image(image: np.ndarray | Image.Image) -> ClassificationRes
         raw_feat = model(tensor)
         feat_norm = F.normalize(raw_feat, dim=-1).cpu().numpy().astype(np.float32)
 
-    categories = list(MVTEC_CATEGORIES)
+    categories = list(bundle.get("categories", list(centroids.keys()) if centroids else MVTEC_CATEGORIES))
     scores: dict[str, float] = {}
 
     # 1. Centroid similarities (robust against variations)
@@ -155,6 +176,7 @@ def classify_product_image(image: np.ndarray | Image.Image) -> ClassificationRes
     is_ood = ood_score > 0.65  # Very high threshold so valid photos are never blocked
 
     ranked = [(categories[i], round(float(calibrated_probs[i]), 4)) for i in ranked_indices]
+    detected_desc = OBJECT_DESCRIPTIONS.get(best_category, best_category.replace("_", " ").title())
 
     return ClassificationResult(
         category=best_category,
@@ -164,4 +186,5 @@ def classify_product_image(image: np.ndarray | Image.Image) -> ClassificationRes
         ood_threshold=round(ood_threshold, 5),
         is_ood=is_ood,
         ranked_scores=ranked,
+        detected_object=detected_desc,
     )

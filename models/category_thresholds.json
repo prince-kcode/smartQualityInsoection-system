@@ -1,6 +1,6 @@
 {
   "bottle": {
-    "threshold": 0.052,
+    "threshold": 0.055,
     "avg_normal": 0.025,
     "max_normal": 0.043
   },
@@ -73,5 +73,10 @@
     "threshold": 0.06,
     "avg_normal": 0.03,
     "max_normal": 0.052
+  },
+  "spoon": {
+    "threshold": 0.12,
+    "avg_normal": 0.05,
+    "max_normal": 0.1
   }
 }
