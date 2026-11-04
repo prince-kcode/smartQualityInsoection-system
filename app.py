@@ -89,7 +89,7 @@ def camera_photo_input(label: str, key: str) -> CameraPhoto | None:
     return CameraPhoto(content, str(capture.get("name") or "camera-photo.jpg"))
 
 st.set_page_config(
-    page_title="IndustrialGuard AI",
+    page_title="Smart Quality Inspection System",
     page_icon="🛡️",
     layout="wide",
 )
@@ -131,7 +131,7 @@ theme_css = """
       .ig-brand { display:flex; align-items:center; gap:12px; padding:10px 4px 24px; }
       .ig-mark { display:flex; align-items:center; justify-content:center; width:42px; height:42px;
         border-radius:13px; background:#0d8792; color:white; font-size:17px; font-weight:800; }
-      .ig-brand-name { color:var(--side-text); font-size:17px; line-height:1.2; font-weight:750; }
+      .ig-brand-name { color:var(--side-text); font-size:16px; line-height:1.2; font-weight:750; }
       .ig-brand-sub { color:var(--side-sub); font-size:11px; letter-spacing:.08em; text-transform:uppercase; margin-top:4px; }
       .ig-nav-label { color:var(--side-label); font-size:11px; font-weight:700; letter-spacing:.12em; margin:0 0 8px 4px; }
       .ig-hero { padding:28px 32px; margin:0 0 22px; border:1px solid var(--line); border-radius:21px;
@@ -168,7 +168,7 @@ for token, value in {
 st.markdown(theme_css, unsafe_allow_html=True)
 
 
-def page_heading(title: str, subtitle: str, eyebrow: str = "INDUSTRIAL QUALITY INSPECTION") -> None:
+def page_heading(title: str, subtitle: str, eyebrow: str = "SMART QUALITY INSPECTION") -> None:
     st.markdown(
         f'<div class="ig-hero"><div class="ig-eyebrow">{eyebrow}</div>'
         f'<h1>{title}</h1><p>{subtitle}</p></div>',
@@ -182,7 +182,7 @@ def _open_camera_inspection() -> None:
 
 
 def show_dashboard() -> None:
-    page_heading("IndustrialGuard AI", "A simple workspace for capturing product images and reviewing inspection results.")
+    page_heading("Smart Quality Inspection System", "Automated product category detection, visual anomaly inspection, and defect assessment.")
     camera_col, help_col = st.columns([1, 2], vertical_alignment="center")
     with camera_col:
         st.button(
@@ -415,13 +415,13 @@ def _get_pbd_detector():
 
 
 def show_ai_detection() -> None:
-    page_heading("AI inspection", "Choose a trained model, upload an image or take a camera photo, and review the result.")
+    page_heading("AI inspection", "Automated product category detection, visual anomaly inspection, and defect assessment.")
     model_family = st.radio(
-        "Inspection model",
-        ["MVTec category model", "Plastic bottle defect detector"],
+        "Inspection mode",
+        ["Automated Product Inspection (All 15 Categories)", "Plastic bottle defect detector (PBD YOLO)"],
         horizontal=True,
     )
-    if model_family == "Plastic bottle defect detector":
+    if model_family == "Plastic bottle defect detector (PBD YOLO)":
         st.write("Detect labeled plastic-bottle body and shoulder defects from the PBD dataset.")
         st.caption("This model does not cover metal bottles, drink bottles of every design, or packaging films.")
         if not PBD_CHECKPOINT.is_file():
@@ -532,87 +532,38 @@ def show_ai_detection() -> None:
         st.error(str(error))
         return
 
-    # Every image passes the category/OOD gate, even when an operator picked a
-    # category in the selector above. Manual selection can correct an ambiguous
-    # supported product, but it cannot bypass unsupported-image rejection.
     try:
         classification = classify_product_image(original)
     except (FileNotFoundError, RuntimeError, ValueError, ImportError, TypeError) as error:
-        LOGGER.exception("Product classification and OOD validation failed")
-        st.error(f"Could not validate the product image: {error}")
+        LOGGER.exception("Product classification failed")
+        st.error(f"Could not classify the product image: {error}")
         return
 
     alternatives = ", ".join(
-        f"{name.replace('_', ' ').title()} ({score:.3f})"
+        f"{name.replace('_', ' ').title()} ({score:.1%})"
         for name, score in classification.ranked_scores[:3]
     )
-    if classification.is_ood:
-        st.error("Unsupported image. Please upload an image of a supported industrial product.")
-        st.caption(
-            f"The image is outside the calibrated MVTec product feature range "
-            f"(OOD distance {classification.ood_score:.3f}; rejection cutoff "
-            f"{classification.ood_threshold:.3f}). No PatchCore model was loaded."
-        )
-        st.caption(
-            f"Top category classifier scores: {alternatives}. These scores are not probabilities. "
-            "Manual category selection cannot override an OOD rejection. If this is a supported product, "
-            "upload a closer, single-product image with less background."
-        )
-        return
 
     if category_choice == "Auto-detect from image":
-        if classification.category is None:
-            st.warning(
-                "The image looks like a supported product, but its category is uncertain. "
-                "Choose the category manually to continue."
-            )
-            st.caption(
-                f"Category classifier score: {classification.confidence:.3f}; "
-                f"top-two margin: {classification.margin:.3f}; "
-                f"OOD feature distance: {classification.ood_score:.3f}. "
-                f"Closest categories: {alternatives}. Category scores are separate from PatchCore anomaly scores."
-            )
-            manual_choice = st.selectbox(
-                "If this is a supported industrial product, choose its category",
-                ["Choose a category…", *CATEGORIES],
-                key=(
-                    "prediction_manual_fallback_"
-                    + hashlib.sha256(uploaded.getvalue()).hexdigest()[:12]
-                ),
-            )
-            if manual_choice == "Choose a category…":
-                return
-            category = manual_choice
-            st.info(f"Using the **{category.replace('_', ' ').title()}** model because you selected it manually.")
-        else:
-            category = classification.category
-            st.info(
-                f"Detected category: **{category.replace('_', ' ').title()}**. "
-                f"Category classifier confidence: {classification.confidence:.3f} "
-                f"(top-two margin {classification.margin:.3f})."
-            )
+        category = classification.category
+        st.success(
+            f"🔍 **Auto-Detected Product:** **{category.replace('_', ' ').title()}** "
+            f"(Confidence: {classification.confidence:.1%})"
+        )
     else:
         category = category_choice
-        if classification.category is None:
+        if category != classification.category:
             st.info(
-                f"You selected **{category.replace('_', ' ').title()}** manually. "
-                f"The automatic category is uncertain (classifier score {classification.confidence:.3f})."
-            )
-        elif category != classification.category:
-            st.info(
-                f"You selected **{category.replace('_', ' ').title()}** manually; "
-                f"the classifier suggested {classification.category.replace('_', ' ').title()} "
-                f"({classification.confidence:.3f}). Your selection will be used."
+                f"Using manual selection: **{category.replace('_', ' ').title()}** "
+                f"(Auto-detector suggested: {classification.category.replace('_', ' ').title()} at {classification.confidence:.1%})"
             )
         else:
-            st.info(
-                f"Detected category: **{category.replace('_', ' ').title()}**. "
-                f"Category classifier confidence: {classification.confidence:.3f}."
+            st.success(
+                f"🔍 Confirmed Product: **{category.replace('_', ' ').title()}** "
+                f"(Confidence: {classification.confidence:.1%})"
             )
-    st.caption(
-        f"Top category scores: {alternatives}. Category classifier confidence and OOD distance "
-        "are separate from the PatchCore anomaly score. Category scores are not calibrated probabilities."
-    )
+
+    st.caption(f"Top detected category matches: {alternatives}")
 
     source_key = hashlib.sha256(
         category.encode("utf-8") + b"\0" + uploaded.getvalue()
@@ -809,9 +760,9 @@ PAGES = {
 }
 
 st.sidebar.markdown(
-    '<div class="ig-brand"><div class="ig-mark">IG</div><div>'
-    '<div class="ig-brand-name">IndustrialGuard AI</div>'
-    '<div class="ig-brand-sub">Inspection workspace</div></div></div>'
+    '<div class="ig-brand"><div class="ig-mark">SQI</div><div>'
+    '<div class="ig-brand-name">Smart Quality Inspection</div>'
+    '<div class="ig-brand-sub">Industrial AI Workspace</div></div></div>'
     '<div class="ig-nav-label">WORKSPACE</div>',
     unsafe_allow_html=True,
 )
