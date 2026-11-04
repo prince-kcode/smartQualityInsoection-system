@@ -956,9 +956,6 @@ def show_ai_detection() -> None:
                 """,
                 unsafe_allow_html=True,
             )
-                """,
-                unsafe_allow_html=True,
-            )
 
     st.caption(f"Category classifier ranking: {alternatives}")
 
