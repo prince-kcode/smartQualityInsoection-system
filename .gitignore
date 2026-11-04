@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.build/
+.codex-finalizer/
+
+# Large binaries and archives
+*.zip
+*.tar.gz
+*.pth
+*.pt
+*.ckpt
+*.onnx
+
+# Local configuration and databases
+.env
+*.db
+*.sqlite3
+
+# Datasets, checkpoints, and generated outputs
+data/raw/**
+data/processed/**
+models/**
+reports/**
+!reports/.gitkeep
+!reports/patchcore_metrics.csv
+!reports/evaluation-notes.md
+!reports/model_comparison.csv
+!reports/comparison_*.png
+!reports/*_autoencoder_*.png
+!reports/*_autoencoder_test_scores.csv
+artifacts/**
+results/**
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/sample/.gitkeep
+!models/.gitkeep
+!artifacts/.gitkeep
+
+# Subprojects / temp profiles
+industrialguard_mlp/datasets/**
+industrialguard_mlp/models/**
+industrialguard_mlp/.chrome_test_profile/**
+industrialguard_mlp/.e2e_chrome_profile/**
+
+# Editors and OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini

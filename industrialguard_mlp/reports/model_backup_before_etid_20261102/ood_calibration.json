@@ -1,0 +1,7 @@
+{
+  "distance_p99": 12.913352012634277,
+  "confidence_p05": 0.9999749660491943,
+  "calibration_count": 2566,
+  "calibration_correct_count": 2566,
+  "method": "99th percentile nearest-normal ResNet18 embedding distance and 5th percentile correct-class confidence on held-out normal products"
+}

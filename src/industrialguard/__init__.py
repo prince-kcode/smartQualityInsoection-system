@@ -1,0 +1,2 @@
+"""IndustrialGuard AI application package."""
+

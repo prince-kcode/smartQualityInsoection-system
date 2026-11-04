@@ -1,0 +1,16 @@
+path: D:\ai_project\industrialguard_mlp\datasets\additional\Plastic Shampoo Bottle
+  Dataset
+train: train/images
+val: valid/images
+test: test/images
+names:
+- adhesion_marg
+- adhesion_unacc
+- dent_marg
+- dent_unacc
+- pob_marg
+- pob_unacc
+- scuff_marg
+- scuff_unacc
+- tear_marg
+- tear_unacc

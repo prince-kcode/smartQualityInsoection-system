@@ -1,0 +1,88 @@
+{
+  "architecture": "ResNet18 U-Net binary defect segmentation",
+  "best_epoch": 12,
+  "split_counts": {
+    "train": {
+      "images": 21060,
+      "normal": 13338,
+      "defective": 7722
+    },
+    "validation": {
+      "images": 3860,
+      "normal": 1780,
+      "defective": 2080
+    },
+    "test": {
+      "images": 3076,
+      "normal": 1808,
+      "defective": 1268
+    }
+  },
+  "calibration": {
+    "image_score_threshold": 1.4738982827111613e-05,
+    "validation_image_f1_at_threshold": 0.9359879032258065,
+    "normal_only_p995_threshold": 0.8583065867424011,
+    "normal_only_p95_threshold": 8.739485565456562e-06,
+    "normal_validation_images": 1780,
+    "defect_validation_images": 2080,
+    "method": "max F1 on held-out validation images containing normal and masked-defect examples"
+  },
+  "held_out_test": {
+    "images": 3076,
+    "image_roc_auc": 0.9356308973786327,
+    "at_validation_max_f1_threshold": {
+      "threshold": 1.4738982827111613e-05,
+      "sensitivity": 0.8241324921135647,
+      "specificity": 0.9789823008849557,
+      "precision": 0.9649122807017544,
+      "f1": 0.8889834113143343
+    },
+    "at_normal_only_p995_threshold": {
+      "threshold": 0.8583065867424011,
+      "sensitivity": 0.749211356466877,
+      "specificity": 0.9950221238938053,
+      "precision": 0.9906152241918665,
+      "f1": 0.8531656937584194
+    },
+    "at_normal_only_p95_threshold": {
+      "threshold": 8.739485565456562e-06,
+      "sensitivity": 0.8438485804416404,
+      "specificity": 0.9380530973451328,
+      "precision": 0.9052453468697124,
+      "f1": 0.8734693877551021
+    },
+    "mixed_pixel_or_box_region_auc_at_56x56": 0.9863667402615788,
+    "mixed_region_iou_at_calibrated_threshold": 0.36675121077880046,
+    "cable_MVTec_AD": {
+      "images": 70,
+      "normal_images": 58,
+      "defective_images": 12,
+      "image_roc_auc": 0.8929597701149425,
+      "sensitivity_at_calibrated_threshold": 0.75,
+      "specificity_at_calibrated_threshold": 0.9482758620689655,
+      "pixel_auc_at_56x56": 0.9211311030832717,
+      "region_iou_at_calibrated_threshold": 0.24676616915422886
+    },
+    "by_annotation_source": {
+      "Industrial benchmark pixel masks": {
+        "images": 2286,
+        "annotation_type": "pixel masks",
+        "image_roc_auc": 0.8304363220646499,
+        "flag_rate_on_defect_images": 0.5334728033472803,
+        "specificity_on_normal_images": 0.9789823008849557,
+        "pixel_or_box_region_auc_at_56x56": 0.9897555812146415,
+        "region_iou_at_pixel_threshold": 0.38470654275556665
+      },
+      "Shampoo bottle bounding boxes": {
+        "images": 790,
+        "annotation_type": "YOLO boxes rasterized as weak rectangular targets",
+        "image_roc_auc": null,
+        "flag_rate_on_defect_images": 1.0,
+        "specificity_on_normal_images": null,
+        "pixel_or_box_region_auc_at_56x56": 0.9836187720874083,
+        "region_iou_at_pixel_threshold": 0.3599061576139939
+      }
+    }
+  },
+  "limitations": "The U-Net localizes binary candidate regions. Shampoo-bottle bounding boxes are weak rectangular targets, downweighted to 0.25 of the per-image loss and evaluated separately from true pixel masks. The attached type and bottle heads have narrower label scopes; no head certifies general severity or sale suitability."
+}

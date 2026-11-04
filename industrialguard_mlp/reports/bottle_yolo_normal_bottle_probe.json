@@ -1,0 +1,145 @@
+{
+  "checkpoint": "models\\bottle_defect_yolo.pt",
+  "probe_dataset": "MVTec AD bottle/test/good; separate normal bottle photos, different domain from shampoo dataset",
+  "confidence_threshold": 0.25,
+  "images_tested": 20,
+  "images_with_candidates": 6,
+  "candidate_image_rate": 0.3,
+  "candidate_boxes_total": 6,
+  "interpretation": "Small exploratory cross-domain negative probe only; not a calibrated clean-shampoo-bottle false-positive rate.",
+  "created_utc": "2026-11-02T11:55:43.946127+00:00",
+  "images": [
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\000.png",
+      "candidate_count": 1,
+      "top_score": 0.280734121799469,
+      "candidate_labels": [
+        "adhesion_unacc"
+      ]
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\001.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\002.png",
+      "candidate_count": 1,
+      "top_score": 0.35499101877212524,
+      "candidate_labels": [
+        "adhesion_unacc"
+      ]
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\003.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\004.png",
+      "candidate_count": 1,
+      "top_score": 0.3792542517185211,
+      "candidate_labels": [
+        "adhesion_unacc"
+      ]
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\005.png",
+      "candidate_count": 1,
+      "top_score": 0.2526896297931671,
+      "candidate_labels": [
+        "adhesion_unacc"
+      ]
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\006.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\007.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\008.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\009.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\010.png",
+      "candidate_count": 1,
+      "top_score": 0.30900153517723083,
+      "candidate_labels": [
+        "adhesion_unacc"
+      ]
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\011.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\012.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\013.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\014.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\015.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\016.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\017.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\018.png",
+      "candidate_count": 0,
+      "top_score": null,
+      "candidate_labels": []
+    },
+    {
+      "image": "datasets\\mvtec_ad\\bottle\\test\\good\\019.png",
+      "candidate_count": 1,
+      "top_score": 0.33240583539009094,
+      "candidate_labels": [
+        "adhesion_unacc"
+      ]
+    }
+  ]
+}

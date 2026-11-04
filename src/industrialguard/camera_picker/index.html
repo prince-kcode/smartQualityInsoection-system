@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root { color-scheme: light; font-family: system-ui, Segoe UI, sans-serif; color: #17364a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: transparent; }
+    .wrap { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(200px, 1fr); gap: 14px; align-items: start; }
+    .preview { min-height: 240px; background: #edf3f6; border: 1px solid #d6e1e7; border-radius: 12px; overflow: hidden; display: grid; place-items: center; }
+    video, img { display: block; width: 100%; max-height: 360px; object-fit: contain; background: #0d1f2d; }
+    .controls { display: grid; gap: 12px; }
+    label { font-size: 14px; font-weight: 650; }
+    select, button { width: 100%; min-height: 42px; border-radius: 9px; font: inherit; }
+    select { border: 1px solid #cbd8df; background: #fff; color: #17364a; padding: 0 10px; }
+    button { border: 1px solid #0c7f89; background: #0c7f89; color: #fff; font-weight: 700; cursor: pointer; padding: 8px 12px; }
+    button.secondary { background: #fff; color: #17364a; border-color: #cbd8df; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .status { min-height: 38px; margin: 0; color: #5d7181; font-size: 13px; line-height: 1.45; }
+    .error { color: #a84b48; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 650px) { .wrap { grid-template-columns: 1fr; } .preview { min-height: 180px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="preview"><video id="video" autoplay playsinline muted></video><img id="still" alt="Captured camera photo" hidden></div>
+    <div class="controls">
+      <label for="camera">Camera device</label>
+      <select id="camera" aria-label="Camera device"></select>
+      <p id="status" class="status">Choose a camera to start its preview.</p>
+      <div class="actions"><button id="start" type="button">Start preview</button><button id="capture" type="button" disabled>Take photo</button></div>
+      <button id="retake" class="secondary" type="button" hidden>Retake photo</button>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const video = document.getElementById("video");
+      const still = document.getElementById("still");
+      const selector = document.getElementById("camera");
+      const status = document.getElementById("status");
+      const startButton = document.getElementById("start");
+      const captureButton = document.getElementById("capture");
+      const retakeButton = document.getElementById("retake");
+      let stream = null;
+      let currentLabel = "";
+      let hasStarted = false;
+      const send = (type, extra = {}) => parent.postMessage({ isStreamlitMessage: true, type, ...extra }, "*");
+      const setValue = (value) => send("streamlit:setComponentValue", { value });
+      const stop = () => { if (stream) stream.getTracks().forEach(track => track.stop()); stream = null; };
+      const setStatus = (message, error = false) => { status.textContent = message; status.classList.toggle("error", error); };
+      async function refreshDevices() {
+        try {
+          // Request permission once so the browser reveals device names. Stop this
+          // temporary stream before opening the camera the user selects.
+          const permissionStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          permissionStream.getTracks().forEach(track => track.stop());
+          const devices = (await navigator.mediaDevices.enumerateDevices()).filter(item => item.kind === "videoinput");
+          selector.replaceChildren();
+          for (const device of devices) {
+            const option = document.createElement("option");
+            option.value = device.deviceId;
+            option.textContent = device.label || `Camera ${selector.length + 1}`;
+            selector.append(option);
+          }
+          if (!devices.length) throw new Error("No camera device was found by the browser.");
+          const preferred = devices.find(device => /HP True Vision/i.test(device.label)) || devices.find(device => !/virtual camera/i.test(device.label)) || devices[0];
+          selector.value = preferred.deviceId;
+          setStatus(`${devices.length} camera device${devices.length === 1 ? "" : "s"} found. Selected ${preferred.label || "camera"}.`);
+          await startPreview();
+        } catch (error) {
+          setStatus(error?.name === "NotAllowedError" ? "Camera access was blocked. Allow camera access for this site, then try again." : `${error?.name || "Camera error"}: ${error?.message || error}`, true);
+        }
+      }
+      async function startPreview() {
+        stop();
+        still.hidden = true;
+        video.hidden = false;
+        captureButton.disabled = true;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: selector.value }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+          video.srcObject = stream;
+          await video.play();
+          if (video.readyState < 1) await new Promise(resolve => video.addEventListener("loadedmetadata", resolve, { once: true }));
+          currentLabel = stream.getVideoTracks()[0]?.label || selector.selectedOptions[0]?.textContent || "Camera";
+          captureButton.disabled = false;
+          setStatus(`Live preview: ${currentLabel} (${video.videoWidth} × ${video.videoHeight}).`);
+        } catch (error) {
+          stop();
+          setStatus(error?.name === "NotAllowedError" ? "Camera access was blocked. Allow camera access for this site, then try again." : `${error?.name || "Camera error"}: ${error?.message || error}`, true);
+        }
+      }
+      selector.addEventListener("change", () => { if (selector.value) startPreview(); });
+      startButton.addEventListener("click", refreshDevices);
+      captureButton.addEventListener("click", () => {
+        if (!stream || !video.videoWidth) return;
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const data = canvas.toDataURL("image/jpeg", 0.9);
+        still.src = data; still.hidden = false; video.hidden = true;
+        stop(); captureButton.disabled = true; retakeButton.hidden = false;
+        setStatus(`Photo captured from ${currentLabel}.`);
+        setValue({ data, camera: currentLabel, name: `camera-${Date.now()}.jpg` });
+      });
+      retakeButton.addEventListener("click", async () => {
+        still.hidden = true; video.hidden = false; retakeButton.hidden = true;
+        setValue(null); await startPreview();
+      });
+      window.addEventListener("message", event => {
+        if (event.data?.type !== "streamlit:render") return;
+        send("streamlit:setFrameHeight", { height: 330 });
+        if (!hasStarted) { hasStarted = true; refreshDevices(); }
+      });
+      window.addEventListener("beforeunload", stop);
+      send("streamlit:componentReady", { apiVersion: 1 });
+    })();
+  </script>
+</body>
+</html>

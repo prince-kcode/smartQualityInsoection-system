@@ -1,0 +1,26 @@
+[
+  {
+    "path": "models\\defect_segmenter.pt",
+    "sha256": "0694C718CA1B8AF0E592094871AC75C2FD07EF5E4373EE2F4C1E0F3473C0D052",
+    "length": 57423477,
+    "last_write_time": "2026-11-02T01:18:12.3408105+05:30"
+  },
+  {
+    "path": "models\\neu_defect_mlp.pt",
+    "sha256": "681CEE4E64A8961F6A073025F2162C15253A4FEDCA85A0E2DE5F2BD172143F8A",
+    "length": 1103821,
+    "last_write_time": "2026-11-02T00:10:51.4046679+05:30"
+  },
+  {
+    "path": "models\\bottle_damage_mlp.pt",
+    "sha256": "F7B5E7244D7684AA9091FF5B67AC77DBEE205508350FA14505B13BD722DDFD86",
+    "length": 674511,
+    "last_write_time": "2026-11-02T00:31:21.7837425+05:30"
+  },
+  {
+    "path": "models\\damage_type_mlp.pt",
+    "sha256": "8B3CF862595D8DB3496DE438B12DAEE0C91F7E753F26386103ECC331F4DD8FA7",
+    "length": 673955,
+    "last_write_time": "2026-11-02T00:27:31.4331311+05:30"
+  }
+]

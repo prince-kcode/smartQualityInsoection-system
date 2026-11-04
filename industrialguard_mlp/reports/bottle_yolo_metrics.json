@@ -1,0 +1,88 @@
+{
+  "architecture": "Ultralytics YOLO11n object detector",
+  "scope": "Plastic shampoo-bottle subtype only; generic bottles and other categories do not use this model",
+  "classes": [
+    "adhesion_marg",
+    "adhesion_unacc",
+    "dent_marg",
+    "dent_unacc",
+    "pob_marg",
+    "pob_unacc",
+    "scuff_marg",
+    "scuff_unacc",
+    "tear_marg",
+    "tear_unacc"
+  ],
+  "dataset": {
+    "train_images": 5535,
+    "validation_images": 1582,
+    "held_out_test_images": 790,
+    "test_instances": 2920,
+    "test_split": "official held-out test split; not used for training or model selection"
+  },
+  "training": {
+    "pretrained_weights": "yolo11n.pt",
+    "pretrained_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "epochs_requested": 30,
+    "epochs_completed": 30,
+    "best_validation_epoch": 30,
+    "best_validation_map50": 0.83438,
+    "best_validation_map50_95": 0.39831,
+    "image_size": 640,
+    "batch_size": 16,
+    "device": "cuda:0",
+    "checkpoint": "models\\bottle_defect_yolo.pt",
+    "ultralytics_version": "8.4.198"
+  },
+  "test_metrics": {
+    "precision": 0.7829843236494023,
+    "recall": 0.8402381710390531,
+    "map50": 0.8431969166111637,
+    "map50_95": 0.40912743426613074,
+    "per_class": {
+      "adhesion_marg": {
+        "map50_95": 0.35162524520233374,
+        "test_instances": 93
+      },
+      "adhesion_unacc": {
+        "map50_95": 0.7005865046954158,
+        "test_instances": 199
+      },
+      "dent_marg": {
+        "map50_95": 0.43171596914891613,
+        "test_instances": 387
+      },
+      "dent_unacc": {
+        "map50_95": 0.2734025476414945,
+        "test_instances": 315
+      },
+      "pob_marg": {
+        "map50_95": 0.36582370916227824,
+        "test_instances": 389
+      },
+      "pob_unacc": {
+        "map50_95": 0.40939767359740076,
+        "test_instances": 315
+      },
+      "scuff_marg": {
+        "map50_95": 0.3963088217178165,
+        "test_instances": 424
+      },
+      "scuff_unacc": {
+        "map50_95": 0.36171670913490234,
+        "test_instances": 667
+      },
+      "tear_marg": {
+        "map50_95": 0.2839125393219556,
+        "test_instances": 74
+      },
+      "tear_unacc": {
+        "map50_95": 0.5167846230387934,
+        "test_instances": 57
+      }
+    }
+  },
+  "app_candidate_confidence_threshold": 0.25,
+  "limitation": "Annotations cover five defect types and marginal/unacceptable grades on plastic shampoo bottles. The source contains no clean shampoo-bottle images. Missing detections do not establish that an item is defect-free, and the detector is not calibrated for other bottles or products.",
+  "completed_utc": "2026-11-02T11:55:22.888833+00:00"
+}

@@ -1,0 +1,270 @@
+{
+  "architecture": "multi-class defect/grade MLP over defect-region crops and the shared frozen ResNet-18 feature encoder",
+  "source": "Plastic Shampoo Bottle Dataset, each YOLO bounding-box crop inherits its defect type and grade",
+  "train_instances": 19845,
+  "validation_instances": 5648,
+  "test_instances": 2920,
+  "source_images": {
+    "train": 5535,
+    "valid": 1582,
+    "test": 790
+  },
+  "instances_per_class_train": {
+    "adhesion_marg": 516,
+    "adhesion_unacc": 1054,
+    "dent_marg": 3025,
+    "dent_unacc": 2691,
+    "pob_marg": 2026,
+    "pob_unacc": 1975,
+    "scuff_marg": 3310,
+    "scuff_unacc": 4366,
+    "tear_marg": 493,
+    "tear_unacc": 389
+  },
+  "classes": [
+    "adhesion_marg",
+    "adhesion_unacc",
+    "dent_marg",
+    "dent_unacc",
+    "pob_marg",
+    "pob_unacc",
+    "scuff_marg",
+    "scuff_unacc",
+    "tear_marg",
+    "tear_unacc"
+  ],
+  "best_epoch": 24,
+  "validation_loss": 0.3114404082298279,
+  "test_accuracy": 0.8849315068493151,
+  "test_macro_f1": 0.8881885418817722,
+  "selective_coverage_at_validation_precision_target": 0.9260273972602739,
+  "selective_accuracy": 0.9160502958579881,
+  "validation_precision_target": 0.9,
+  "per_class": {
+    "adhesion_marg": {
+      "test_instances": 93,
+      "accepted_threshold": 0.5595739483833313,
+      "accepted_predictions": 97,
+      "selective_precision": 0.9278350515463918,
+      "precision": 0.8823529411764706,
+      "recall": 0.967741935483871,
+      "f1": 0.9230769230769231
+    },
+    "adhesion_unacc": {
+      "test_instances": 199,
+      "accepted_threshold": 0.4981042742729187,
+      "accepted_predictions": 199,
+      "selective_precision": 0.9748743718592965,
+      "precision": 0.9748743718592965,
+      "recall": 0.9748743718592965,
+      "f1": 0.9748743718592965
+    },
+    "dent_marg": {
+      "test_instances": 387,
+      "accepted_threshold": 0.6556940078735352,
+      "accepted_predictions": 369,
+      "selective_precision": 0.8861788617886179,
+      "precision": 0.8270142180094787,
+      "recall": 0.9018087855297158,
+      "f1": 0.8627935723114957
+    },
+    "dent_unacc": {
+      "test_instances": 315,
+      "accepted_threshold": 0.5050866603851318,
+      "accepted_predictions": 275,
+      "selective_precision": 0.8763636363636363,
+      "precision": 0.875886524822695,
+      "recall": 0.7841269841269841,
+      "f1": 0.8274706867671692
+    },
+    "pob_marg": {
+      "test_instances": 389,
+      "accepted_threshold": 0.35777679085731506,
+      "accepted_predictions": 391,
+      "selective_precision": 0.9539641943734015,
+      "precision": 0.9539641943734015,
+      "recall": 0.9588688946015425,
+      "f1": 0.9564102564102565
+    },
+    "pob_unacc": {
+      "test_instances": 315,
+      "accepted_threshold": 0.3508143424987793,
+      "accepted_predictions": 317,
+      "selective_precision": 0.9495268138801262,
+      "precision": 0.9435736677115988,
+      "recall": 0.9555555555555556,
+      "f1": 0.9495268138801262
+    },
+    "scuff_marg": {
+      "test_instances": 424,
+      "accepted_threshold": 0.6839233040809631,
+      "accepted_predictions": 356,
+      "selective_precision": 0.8735955056179775,
+      "precision": 0.8110599078341014,
+      "recall": 0.8301886792452831,
+      "f1": 0.8205128205128205
+    },
+    "scuff_unacc": {
+      "test_instances": 667,
+      "accepted_threshold": 0.5790870189666748,
+      "accepted_predictions": 582,
+      "selective_precision": 0.9089347079037801,
+      "precision": 0.8938193343898574,
+      "recall": 0.8455772113943029,
+      "f1": 0.8690292758089369
+    },
+    "tear_marg": {
+      "test_instances": 74,
+      "accepted_threshold": 0.7385944128036499,
+      "accepted_predictions": 64,
+      "selective_precision": 0.90625,
+      "precision": 0.7625,
+      "recall": 0.8243243243243243,
+      "f1": 0.7922077922077922
+    },
+    "tear_unacc": {
+      "test_instances": 57,
+      "accepted_threshold": 0.820993185043335,
+      "accepted_predictions": 54,
+      "selective_precision": 0.9814814814814815,
+      "precision": 0.8833333333333333,
+      "recall": 0.9298245614035088,
+      "f1": 0.905982905982906
+    }
+  },
+  "thresholds": {
+    "adhesion_marg": 0.5595739483833313,
+    "adhesion_unacc": 0.4981042742729187,
+    "dent_marg": 0.6556940078735352,
+    "dent_unacc": 0.5050866603851318,
+    "pob_marg": 0.35777679085731506,
+    "pob_unacc": 0.3508143424987793,
+    "scuff_marg": 0.6839233040809631,
+    "scuff_unacc": 0.5790870189666748,
+    "tear_marg": 0.7385944128036499,
+    "tear_unacc": 0.820993185043335
+  },
+  "confusion_matrix": [
+    [
+      90,
+      0,
+      1,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      4,
+      194,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      349,
+      31,
+      0,
+      0,
+      1,
+      3,
+      3,
+      0
+    ],
+    [
+      1,
+      1,
+      50,
+      247,
+      1,
+      3,
+      4,
+      3,
+      4,
+      1
+    ],
+    [
+      1,
+      1,
+      3,
+      1,
+      373,
+      5,
+      1,
+      4,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      1,
+      9,
+      301,
+      0,
+      0,
+      2,
+      1
+    ],
+    [
+      1,
+      0,
+      8,
+      1,
+      0,
+      2,
+      352,
+      57,
+      2,
+      1
+    ],
+    [
+      2,
+      3,
+      5,
+      1,
+      6,
+      5,
+      74,
+      564,
+      5,
+      2
+    ],
+    [
+      3,
+      0,
+      4,
+      0,
+      0,
+      2,
+      2,
+      0,
+      61,
+      2
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      53
+    ]
+  ],
+  "limitation": "Type and marginal/unacceptable grades apply only to crops resembling this plastic shampoo-bottle dataset. The source has no clean bottle examples; this head classifies already-localized candidate regions and cannot determine defect absence, safety, or sale suitability."
+}

@@ -1,0 +1,107 @@
+{
+  "browser": "isolated headless Chrome via CDP",
+  "url": "http://127.0.0.1:8765/",
+  "page_rendered": true,
+  "cases": [
+    {
+      "case": "normal_cable",
+      "status": "PASS",
+      "expected_text": "Identified as Cable (industrial mlp)",
+      "observed_lines": [
+        "Identified as Cable (industrial mlp)",
+        "Damage screen score"
+      ]
+    },
+    {
+      "case": "defective_cable",
+      "status": "PASS",
+      "expected_text": "Identified as Cable (industrial mlp)",
+      "observed_lines": [
+        "Identified as Cable (industrial mlp)",
+        "Damage screen score"
+      ]
+    },
+    {
+      "case": "capsule",
+      "status": "PASS",
+      "expected_text": "Identified as Capsule (industrial mlp)",
+      "observed_lines": [
+        "Identified as Capsule (industrial mlp)",
+        "Damage screen score"
+      ]
+    },
+    {
+      "case": "person_photo",
+      "status": "PASS",
+      "expected_text": "Unsupported or uncertain product image.",
+      "observed_lines": [
+        "Unsupported or uncertain product image. No industrial defect inspection was run."
+      ]
+    },
+    {
+      "case": "consumer_charging_cable",
+      "status": "PASS",
+      "expected_text": "Identified as Cable",
+      "observed_lines": [
+        "Identified as Cable (open-vocabulary match)"
+      ]
+    },
+    {
+      "case": "multi_image_batch",
+      "status": "PASS",
+      "expected_count": 2,
+      "observed_lines": [
+        "Identified as Cable (industrial mlp)",
+        "Identified as Capsule (industrial mlp)"
+      ]
+    },
+    {
+      "case": "manual_category_override",
+      "status": "PASS",
+      "observed_text": [
+        "Identified as Cable (manual selection)",
+        "You selected this category manually; its normal references were used for comparison.",
+        "You chose the category manually. The visual screen was run, but the category was not confirmed automatically."
+      ]
+    },
+    {
+      "case": "other_product_manual_damage_screen",
+      "status": "PASS",
+      "observed_lines": [
+        "Model 2 \u2014 Wear and damage: a separate image model highlights candidate regions. Outputs on products outside the benchmark image style are exploratory and need human review.",
+        "Analyze several images together. The trained MLP recognizes its 41 product labels; a pretrained visual matcher can suggest familiar additional products. Choose Other product (manual) for an item outside those labels. Damage results outside benchmark-style images are exploratory cues and need human review.",
+        "You chose Other product manually. The damage model can suggest a visual region, but no matching product reference or calibrated category result is available.",
+        "The damage model ran as an exploratory screen. Its threshold was calibrated on industrial benchmark images, so treat this score and overlay as a visual clue for this product or scene, not a validated defect decision.",
+        "Candidate visual region (screen score 1.000). Review the highlighted area.",
+        "Exploratory candidate region \u2014 red overlay",
+        "Model 1 identifies a product category. Model 2 highlights candidate damage regions and may classify broad damage types from MVTec labels. The optional bottle YOLO detector uses shampoo-bottle box labels only. Other products still need product-specific severity labels and human review; the app does not certify sale suitability."
+      ]
+    },
+    {
+      "case": "plastic_shampoo_bottle_automatic_category",
+      "status": "PASS",
+      "expected_text": "Identified as Plastic Shampoo Bottle (industrial mlp)",
+      "observed_lines": [
+        "Identified as Plastic Shampoo Bottle (industrial mlp)"
+      ]
+    },
+    {
+      "case": "bottle_specific_yolo_manual_override",
+      "status": "PASS",
+      "yolo_report_rendered": true,
+      "observed_lines": [
+        "Model 2 \u2014 Wear and damage: a separate image model highlights candidate regions. Outputs on products outside the benchmark image style are exploratory and need human review.",
+        "The general damage model localizes candidate regions. A bottle-specific YOLO detector reports type/grade clues only when the product is identified as a plastic shampoo bottle. Neither result certifies sale fitness for general products.",
+        "Identified as Plastic Shampoo Bottle (manual selection)",
+        "Bottle YOLO candidate detections: Scuff \u2014 Minor (dataset grade: marginal, model score 45.9%)",
+        "YOLO candidate defect boxes \u2014 review each highlighted region",
+        "This detector was trained on plastic shampoo bottles only; \u2018marginal\u2019 is shown as minor and \u2018unacceptable\u2019 as major. The source has no clean-bottle examples, so these are candidate clues and human review is required.",
+        "Candidate visual region (screen score 0.994). Review the highlighted area.",
+        "Exploratory candidate region \u2014 red overlay",
+        "Model 1 identifies a product category. Model 2 highlights candidate damage regions and may classify broad damage types from MVTec labels. The optional bottle YOLO detector uses shampoo-bottle box labels only. Other products still need product-specific severity labels and human review; the app does not certify sale suitability."
+      ]
+    }
+  ],
+  "screenshot": "D:\\ai_project\\industrialguard_mlp\\reports\\browser_demo.png",
+  "consumer_charging_cable_screenshot": "D:\\ai_project\\industrialguard_mlp\\reports\\pic2_browser_result.png"
+}

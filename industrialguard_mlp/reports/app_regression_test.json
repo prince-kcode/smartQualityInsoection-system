@@ -1,0 +1,206 @@
+{
+  "app": "IndustrialGuard AI",
+  "test_method": "Streamlit AppTest against app.py",
+  "model_2_loaded": true,
+  "cases": [
+    {
+      "case": "normal_cable",
+      "status": "PASS",
+      "expected_category": "cable",
+      "observed_category": "cable",
+      "route": "Industrial MLP",
+      "category_score": 0.9997515082359314,
+      "anomaly_score": 4.168779014435131e-06,
+      "anomaly_flag": false,
+      "damage_model_loaded": true,
+      "damage_screen": {
+        "score": 4.168779014435131e-06,
+        "threshold": 1.4738982827111613e-05,
+        "flagged": false,
+        "highlighted_area_fraction": 0.0
+      },
+      "error": null
+    },
+    {
+      "case": "defective_cable",
+      "status": "PASS",
+      "expected_category": "cable",
+      "observed_category": "cable",
+      "route": "Industrial MLP",
+      "category_score": 0.9998958110809326,
+      "anomaly_score": 0.9992778897285461,
+      "anomaly_flag": true,
+      "damage_model_loaded": true,
+      "damage_screen": {
+        "score": 0.9992778897285461,
+        "threshold": 1.4738982827111613e-05,
+        "flagged": true,
+        "highlighted_area_fraction": 0.01881377551020408
+      },
+      "error": null
+    },
+    {
+      "case": "capsule",
+      "status": "PASS",
+      "expected_category": "capsule",
+      "observed_category": "capsule",
+      "route": "Industrial MLP",
+      "category_score": 0.9994651675224304,
+      "anomaly_score": 5.851703463122249e-06,
+      "anomaly_flag": false,
+      "damage_model_loaded": true,
+      "damage_screen": {
+        "score": 5.851703463122249e-06,
+        "threshold": 1.4738982827111613e-05,
+        "flagged": false,
+        "highlighted_area_fraction": 0.0
+      },
+      "error": null
+    },
+    {
+      "case": "person_photo",
+      "status": "PASS",
+      "observed_category": null,
+      "general_label": "person",
+      "error": null
+    },
+    {
+      "case": "random_noise",
+      "status": "PASS",
+      "observed_category": null,
+      "general_label": "random/noise image",
+      "error": null
+    },
+    {
+      "case": "consumer_charging_cable",
+      "status": "PASS",
+      "expected_category": "cable",
+      "observed_category": "cable",
+      "route": "Open-vocabulary match",
+      "label_match_score": 0.6188111901283264,
+      "mlp_nearest_category": "cable",
+      "damage_model_loaded": true,
+      "damage_screen": {
+        "score": 0.9997163414955139,
+        "threshold": 1.4738982827111613e-05,
+        "flagged": true,
+        "highlighted_area_fraction": 0.016063456632653062,
+        "candidate_region_count": 2,
+        "exploratory": true
+      },
+      "damage_type_clues": [
+        {
+          "type": "surface or contamination",
+          "score": 0.6778489351272583,
+          "threshold": 0.31935903429985046,
+          "region": 1,
+          "region_area_pixels": 773
+        },
+        {
+          "type": "surface or contamination",
+          "score": 0.38012808561325073,
+          "threshold": 0.31935903429985046,
+          "region": 2,
+          "region_area_pixels": 33
+        }
+      ],
+      "error": null
+    },
+    {
+      "case": "manual_category_override",
+      "status": "PASS",
+      "observed_category": "cable",
+      "route": "Manual selection"
+    },
+    {
+      "case": "other_product_manual_damage_screen",
+      "status": "PASS",
+      "category": "other_product",
+      "route": "Manual selection",
+      "damage_model_ran": true
+    },
+    {
+      "case": "other_product_custom_name",
+      "status": "PASS",
+      "category": "consumer charging cable",
+      "reference_available": false
+    },
+    {
+      "case": "automatic_selection_restores_auto_result",
+      "status": "PASS",
+      "observed_category": "cable",
+      "route": "Open-vocabulary match"
+    },
+    {
+      "case": "ETID_group_held_out_cable_routing",
+      "status": "PASS",
+      "observed_category": "cable",
+      "route": "Open-vocabulary match",
+      "image": "datasets\\additional\\etid\\cable\\ewaste-mixed-20_Cable_00464.jpg"
+    },
+    {
+      "case": "multi_image_batch",
+      "status": "PASS",
+      "expected_categories": [
+        "cable",
+        "capsule"
+      ],
+      "observed_categories": [
+        "cable",
+        "capsule"
+      ],
+      "analyzed_count": 2
+    },
+    {
+      "case": "plastic_shampoo_bottle_automatic_category",
+      "status": "PASS",
+      "expected_category": "plastic_shampoo_bottle",
+      "observed_category": "plastic_shampoo_bottle",
+      "route": "Industrial MLP",
+      "category_confidence": 0.9968308806419373
+    },
+    {
+      "case": "plastic_shampoo_bottle_yolo_integration",
+      "status": "PASS",
+      "category": "plastic_shampoo_bottle",
+      "localization_model_loaded": true,
+      "bottle_yolo_loaded": true,
+      "predicted_type_grades": [
+        {
+          "label": "scuff_marg",
+          "type": "scuff",
+          "grade": "marginal",
+          "minor_major": "minor",
+          "score": 0.4588288962841034,
+          "threshold": 0.25,
+          "box_xyxy": [
+            189,
+            159,
+            230,
+            222
+          ],
+          "region_area_pixels": 2583
+        }
+      ]
+    },
+    {
+      "case": "bottle_yolo_test_sample_label_match",
+      "status": "PASS",
+      "ground_truth_labels": [
+        "scuff_marg"
+      ],
+      "predicted_labels": [
+        "scuff_marg"
+      ],
+      "matched_labels": [
+        "scuff_marg"
+      ]
+    },
+    {
+      "case": "generic_bottle_not_routed_to_shampoo_yolo",
+      "status": "PASS",
+      "category": "bottle",
+      "yolo_detector_ran": false
+    }
+  ]
+}

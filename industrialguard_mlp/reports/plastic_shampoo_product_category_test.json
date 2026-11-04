@@ -1,0 +1,10 @@
+{
+  "test_images": 790,
+  "split_method": "official Plastic Shampoo Bottle test split; notebook-checkpoint duplicate paths excluded",
+  "category_accuracy": 1.0,
+  "category_recall": 1.0,
+  "correct_test_images": 790,
+  "shampoo_subtype_false_positives_on_other_held_out_sources": 0,
+  "other_held_out_source_images_checked": 5801,
+  "subtype_precision_across_available_held_out_sources": 1.0
+}

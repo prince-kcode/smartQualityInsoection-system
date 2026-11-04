@@ -1,0 +1,250 @@
+{
+  "architecture": "DefectTypeMLP on defect-mask-bounded crops using the shared frozen ResNet-18 encoder",
+  "source": "MVTec AD test defect folders and pixel masks; custom stratified-by-folder image splits",
+  "label_mapping": "scratch, crack, hole/puncture, cut/tear, broken/damaged, missing/misplaced part, deformation, surface/contamination, or multiple/other",
+  "counts": {
+    "train": {
+      "instances": 882,
+      "per_class": {
+        "broken_or_damaged": 78,
+        "surface_or_contamination": 324,
+        "deformation": 96,
+        "missing_or_misplaced_part": 46,
+        "multiple_or_other": 39,
+        "cut_or_tear": 74,
+        "hole_or_puncture": 67,
+        "crack": 59,
+        "scratch": 99
+      }
+    },
+    "validation": {
+      "instances": 198,
+      "per_class": {
+        "broken_or_damaged": 17,
+        "surface_or_contamination": 71,
+        "deformation": 22,
+        "missing_or_misplaced_part": 11,
+        "multiple_or_other": 9,
+        "cut_or_tear": 18,
+        "hole_or_puncture": 16,
+        "crack": 13,
+        "scratch": 21
+      }
+    },
+    "test": {
+      "instances": 178,
+      "per_class": {
+        "broken_or_damaged": 18,
+        "surface_or_contamination": 68,
+        "deformation": 19,
+        "missing_or_misplaced_part": 10,
+        "multiple_or_other": 7,
+        "cut_or_tear": 13,
+        "hole_or_puncture": 11,
+        "crack": 12,
+        "scratch": 20
+      }
+    }
+  },
+  "classes": [
+    "broken_or_damaged",
+    "crack",
+    "cut_or_tear",
+    "deformation",
+    "hole_or_puncture",
+    "missing_or_misplaced_part",
+    "multiple_or_other",
+    "scratch",
+    "surface_or_contamination"
+  ],
+  "best_epoch": 20,
+  "validation_loss": 0.5729556679725647,
+  "validation_precision_target": 0.8,
+  "minimum_validation_predictions_per_class": 5,
+  "test_accuracy": 0.7808988764044944,
+  "test_macro_f1": 0.7221195453348727,
+  "selective_coverage": 0.8651685393258427,
+  "selective_accuracy": 0.8376623376623377,
+  "per_class": {
+    "broken_or_damaged": {
+      "precision": 0.7777777777777778,
+      "recall": 0.7777777777777778,
+      "f1-score": 0.7777777777777778,
+      "support": 18.0
+    },
+    "crack": {
+      "precision": 0.7272727272727273,
+      "recall": 0.6666666666666666,
+      "f1-score": 0.6956521739130435,
+      "support": 12.0
+    },
+    "cut_or_tear": {
+      "precision": 0.6428571428571429,
+      "recall": 0.6923076923076923,
+      "f1-score": 0.6666666666666666,
+      "support": 13.0
+    },
+    "deformation": {
+      "precision": 0.7368421052631579,
+      "recall": 0.7368421052631579,
+      "f1-score": 0.7368421052631579,
+      "support": 19.0
+    },
+    "hole_or_puncture": {
+      "precision": 0.5,
+      "recall": 0.5454545454545454,
+      "f1-score": 0.5217391304347826,
+      "support": 11.0
+    },
+    "missing_or_misplaced_part": {
+      "precision": 0.8181818181818182,
+      "recall": 0.9,
+      "f1-score": 0.8571428571428571,
+      "support": 10.0
+    },
+    "multiple_or_other": {
+      "precision": 0.5714285714285714,
+      "recall": 0.5714285714285714,
+      "f1-score": 0.5714285714285714,
+      "support": 7.0
+    },
+    "scratch": {
+      "precision": 0.8333333333333334,
+      "recall": 0.75,
+      "f1-score": 0.7894736842105263,
+      "support": 20.0
+    },
+    "surface_or_contamination": {
+      "precision": 0.8823529411764706,
+      "recall": 0.8823529411764706,
+      "f1-score": 0.8823529411764706,
+      "support": 68.0
+    },
+    "accuracy": 0.7808988764044944,
+    "macro avg": {
+      "precision": 0.7211162685878888,
+      "recall": 0.7247589222305424,
+      "f1-score": 0.7221195453348727,
+      "support": 178.0
+    },
+    "weighted avg": {
+      "precision": 0.7833309013084293,
+      "recall": 0.7808988764044944,
+      "f1-score": 0.7815422777755331,
+      "support": 178.0
+    }
+  },
+  "thresholds": {
+    "broken_or_damaged": 0.7920790314674377,
+    "crack": 0.6056938767433167,
+    "cut_or_tear": 0.4231213629245758,
+    "deformation": 0.30690354108810425,
+    "hole_or_puncture": 0.6328749656677246,
+    "missing_or_misplaced_part": 0.4366055130958557,
+    "multiple_or_other": 0.7673409581184387,
+    "scratch": 0.7436677813529968,
+    "surface_or_contamination": 0.31935903429985046
+  },
+  "confusion_matrix": [
+    [
+      14,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      8,
+      0,
+      0,
+      2,
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      9,
+      0,
+      3,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      3,
+      0,
+      2,
+      14,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      1,
+      0,
+      6,
+      1,
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      9,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0,
+      15,
+      2
+    ],
+    [
+      0,
+      2,
+      1,
+      3,
+      0,
+      0,
+      1,
+      1,
+      60
+    ]
+  ],
+  "limitation": "Broad types are derived from MVTec folder names, not independently adjudicated severity labels. The classifier is trained only on MVTec defect crops; its clues are not calibrated for unrelated products or camera styles and do not determine sale suitability."
+}
