@@ -1,0 +1,77 @@
+{
+  "bottle": {
+    "threshold": 0.0652,
+    "avg_normal_distance": 0.0247,
+    "avg_defect_distance": 0.1259
+  },
+  "cable": {
+    "threshold": 0.1246,
+    "avg_normal_distance": 0.1013,
+    "avg_defect_distance": 0.1596
+  },
+  "capsule": {
+    "threshold": 0.0331,
+    "avg_normal_distance": 0.025,
+    "avg_defect_distance": 0.0451
+  },
+  "carpet": {
+    "threshold": 0.0819,
+    "avg_normal_distance": 0.0695,
+    "avg_defect_distance": 0.1004
+  },
+  "grid": {
+    "threshold": 0.1431,
+    "avg_normal_distance": 0.1647,
+    "avg_defect_distance": 0.1107
+  },
+  "hazelnut": {
+    "threshold": 0.1604,
+    "avg_normal_distance": 0.1071,
+    "avg_defect_distance": 0.2404
+  },
+  "leather": {
+    "threshold": 0.0208,
+    "avg_normal_distance": 0.0122,
+    "avg_defect_distance": 0.0337
+  },
+  "metal_nut": {
+    "threshold": 0.0457,
+    "avg_normal_distance": 0.0444,
+    "avg_defect_distance": 0.0477
+  },
+  "pill": {
+    "threshold": 0.0445,
+    "avg_normal_distance": 0.0445,
+    "avg_defect_distance": 0.0445
+  },
+  "screw": {
+    "threshold": 0.099,
+    "avg_normal_distance": 0.0917,
+    "avg_defect_distance": 0.1101
+  },
+  "tile": {
+    "threshold": 0.192,
+    "avg_normal_distance": 0.0685,
+    "avg_defect_distance": 0.3771
+  },
+  "toothbrush": {
+    "threshold": 0.0779,
+    "avg_normal_distance": 0.0605,
+    "avg_defect_distance": 0.1039
+  },
+  "transistor": {
+    "threshold": 0.0651,
+    "avg_normal_distance": 0.0582,
+    "avg_defect_distance": 0.0754
+  },
+  "wood": {
+    "threshold": 0.1641,
+    "avg_normal_distance": 0.0793,
+    "avg_defect_distance": 0.2912
+  },
+  "zipper": {
+    "threshold": 0.04,
+    "avg_normal_distance": 0.0253,
+    "avg_defect_distance": 0.0622
+  }
+}

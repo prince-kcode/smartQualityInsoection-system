@@ -109,7 +109,18 @@ def _predict_fallback(image_path: Path, category: str) -> tuple[float, bool, np.
 
     # Distance-based anomaly score (calibrated for standard 0-1 range)
     anomaly_score = float(np.clip(1.0 - sim, 0.0, 1.0))
-    threshold = 0.16
+    threshold = 0.10
+    thresholds_path = project_root / "models" / "category_thresholds.json"
+    if thresholds_path.is_file():
+        try:
+            import json
+            with open(thresholds_path, "r", encoding="utf-8") as f:
+                th_data = json.load(f)
+                if category in th_data and "threshold" in th_data[category]:
+                    threshold = float(th_data[category]["threshold"])
+        except Exception:
+            pass
+
     is_anomalous = anomaly_score > threshold
 
     # Generate synthetic localized heatmap based on high-frequency edge/gradient activations
