@@ -897,6 +897,7 @@ def show_ai_detection() -> None:
 
     sample_dir = PROJECT_ROOT / "data" / "sample"
     sample_dict = {
+        "🥄 [YOUR SPECIMEN] Broken Wooden Spoon Bowl (Handcrafted Tableware QA)": "user_uploaded_specimen_raw.jpg",
         "🥄 [UNSEEN SPECIMEN] Metal Tableware Spoon (Stainless Steel QA)": "metal_spoon_unseen_test.jpg",
         "🪵 [UNSEEN SPECIMEN] Wooden Spoon (Hardwood Cutlery QA)": "wooden_spoon_unseen_test.jpg",
         "🍼 [UNSEEN SPECIMEN] Plastic Bottle (Polymer Recyclable QA)": "plastic_bottle_unseen_test.jpg",
@@ -1069,11 +1070,11 @@ def show_ai_detection() -> None:
     current = previous if previous and previous.get("source_key") == source_key else None
 
     # Auto-detection action controls
-    run_btn_col1, run_btn_col2 = st.columns([3, 1], vertical_alignment="center")
+    run_btn_col1, run_btn_col2 = st.columns([2, 1])
     with run_btn_col1:
         st.markdown(
             """
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px;">
+            <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
               <span class="ind-dot ind-dot-green"></span>
               <span><strong>AUTO-METROLOGY ACTIVE:</strong> Synchronous 3-engine inspection runs automatically upon specimen ingest.</span>
             </div>
@@ -1081,7 +1082,7 @@ def show_ai_detection() -> None:
             unsafe_allow_html=True,
         )
     with run_btn_col2:
-        re_scan_clicked = st.button("🔄 Re-scan Specimen", use_container_width=True, help="Force a fresh synchronous inspection pass across all 3 AI models.")
+        re_scan_clicked = st.button("🔄 RE-SCAN SPECIMEN", type="primary", use_container_width=True, help="Force a fresh synchronous inspection pass across all 3 AI models.")
 
     if current is None or re_scan_clicked:
         try:
@@ -1247,14 +1248,25 @@ def show_ai_detection() -> None:
         )
 
     # Metric Cards Row
+    specimen_name = (
+        current["classification"].fine_class.replace("_", " ").title()
+        if getattr(current["classification"], "fine_class", None)
+        else category_label
+    )
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-    m_col1.metric("Classified Specimen", f"{category_label}", f"{current['classification'].confidence:.1%}")
+    m_col1.metric("Classified Specimen", specimen_name, f"↑ {current['classification'].confidence:.1%}")
     m_col2.metric("Surface Anomaly", f"{current['anomaly_score']:.4f}", "PatchCore Manifold")
     m_col3.metric("YOLO Defect Bboxes", f"{yolo_res.defect_count}", f"Max {yolo_res.max_confidence:.1%}" if yolo_res.has_defect else "0 defects")
     m_col4.metric("Cycle Latency", f"{current['processing_seconds']:.3f} s", "CUDA Accelerated")
 
-    # 3-Visual Gallery: Synchronized Optical Monitors with Multi-Color Channel Headers
-    st.markdown("### 🖼️ Synchronized Multi-Channel Optical Displays")
+    # 3-Visual Gallery: Synchronized Optical Monitors with Multi-Color Channel Headers & Re-scan Action
+    disp_head_col1, disp_head_col2 = st.columns([3, 1])
+    with disp_head_col1:
+        st.markdown("### 🖼️ Synchronized Multi-Channel Optical Displays")
+    with disp_head_col2:
+        if st.button("🔄 Re-scan Display Channels", key="rescan_display_btn", use_container_width=True, help="Force re-rendering of all 3 optical cameras."):
+            st.session_state.pop("latest_prediction", None)
+            st.rerun()
     v_col1, v_col2, v_col3 = st.columns(3)
     with v_col1:
         st.markdown(
