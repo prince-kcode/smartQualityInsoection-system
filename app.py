@@ -897,9 +897,12 @@ def show_ai_detection() -> None:
 
     sample_dir = PROJECT_ROOT / "data" / "sample"
     sample_dict = {
-        "🥄 [UNSEEN SPECIMEN] Tableware Spoon (Cutlery Metrology)": "spoon_specimen.png",
+        "🥄 [UNSEEN SPECIMEN] Metal Tableware Spoon (Stainless Steel QA)": "metal_spoon_unseen_test.jpg",
+        "🪵 [UNSEEN SPECIMEN] Wooden Spoon (Hardwood Cutlery QA)": "wooden_spoon_unseen_test.jpg",
+        "🍼 [UNSEEN SPECIMEN] Plastic Bottle (Polymer Recyclable QA)": "plastic_bottle_unseen_test.jpg",
+        "🔌 [UNSEEN SPECIMEN] Charger Cable (USB-C Peripheral Cord QA)": "charger_cable_unseen_test.jpg",
+        "⚡ [UNSEEN SPECIMEN] Industrial Electrical Cable (Wiring Harness QA)": "electrical_cable_unseen_test.jpg",
         "🪵 [UNSEEN SPECIMEN] Natural Wood Board (Timber Grain QA)": "wood_unseen_test.png",
-        "🍼 [UNSEEN SPECIMEN] PBD Post-Consumer Bottle (Polymer QA)": "plastic_bottle_unseen_pbd.jpg",
         "🧵 [UNSEEN SPECIMEN] Woven Textile Carpet (Weave Metrology)": "carpet_unseen_test.png",
         "🧱 [UNSEEN SPECIMEN] Ceramic Structural Tile (Glaze QA)": "tile_unseen_test.png",
         "🪥 [UNSEEN SPECIMEN] Hygiene Toothbrush (Consumer Goods)": "toothbrush_unseen_test.png",
@@ -1001,6 +1004,19 @@ def show_ai_detection() -> None:
     )
 
     if category_choice == "Auto-detect from image (Recommended)":
+        if classification.category == "unknown":
+            st.markdown(
+                f"""
+                <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-left: 4px solid var(--rose); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
+                  <strong style="color: var(--rose); font-size: 14px;">[UNKNOWN SPECIMEN / REJECTED]</strong> {classification.detected_object}<br/>
+                  <div style="margin-top: 6px; font-size: 12px; color: var(--muted);">
+                    Maximum confidence score: <strong>{classification.confidence:.1%}</strong> (Threshold: 50.0%). To inspect this specimen, manually select a <strong>Target Product Specification</strong> from the dropdown above.
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            return
         category = classification.category
         st.markdown(
             f"""

@@ -24,6 +24,7 @@ industrialguard_mlp/**/*.pt
 *.sqlite3
 
 # Datasets and local artifacts
+data/dataset_products/**
 data/raw/**
 data/processed/**
 artifacts/**
@@ -45,6 +46,7 @@ industrialguard_mlp/.e2e_chrome_profile/**
 industrialguard_mlp/yolo11n.pt
 
 # Editors and OS
+.mpl_cache/
 .vscode/
 .idea/
 Thumbs.db
