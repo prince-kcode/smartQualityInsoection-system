@@ -1005,47 +1005,59 @@ def show_ai_detection() -> None:
     )
 
     if category_choice == "Auto-detect from image (Recommended)":
-        if classification.category == "unknown":
-            fallback_cat = (
-                classification.ranked_scores[0][0]
-                if classification.ranked_scores and classification.ranked_scores[0][0] in CATEGORIES
-                else "bottle"
-            )
-            category = fallback_cat
+        if classification.category == "unknown" or classification.is_ood:
+            supported_list = ", ".join(c.replace("_", " ").title() for c in CATEGORIES)
             st.markdown(
                 f"""
-                <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-left: 4px solid var(--amber); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
-                  <strong style="color: var(--amber); font-size: 14px;">[LOW-CONFIDENCE SPECIMEN // AUTO-ROUTED]</strong> {classification.detected_object}<br/>
-                  <div style="margin-top: 6px; font-size: 12px; color: var(--muted);">
-                    Confidence score: <strong>{classification.confidence:.1%}</strong>. Automatically routed to closest inspection line: <strong>{category.replace('_', ' ').upper()}</strong>.
+                <div class="ind-verdict-reject" style="margin-top: 12px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <h2>
+                      🚫 NOT TRAINED FOR THIS DATASET // UNSUPPORTED PICTURE
+                    </h2>
+                    <span style="background: #ef4444; color: white; padding: 5px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;">
+                      OUT-OF-DISTRIBUTION [REJECTED]
+                    </span>
                   </div>
+                  <p style="font-size: 14px; margin-top: 10px;">
+                    <strong>This uploaded picture does not exist in our trained dataset:</strong> {classification.detected_object}<br/>
+                    The AI models are trained exclusively for the 16 industrial dataset categories: <strong>{supported_list}</strong>. Please upload a picture from these supported product categories.
+                  </p>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
-        else:
-            category = classification.category
-            st.markdown(
-                f"""
-                <div style="background: linear-gradient(90deg, rgba(168, 85, 247, 0.12), rgba(0, 240, 255, 0.08)); border: 1px solid rgba(168, 85, 247, 0.4); border-left: 4px solid var(--violet); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); box-shadow: 0 4px 16px var(--shadow);">
-                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                    <div>
-                      <span style="color: var(--violet); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">[ENGINE 01 // OBJECT RECOGNITION]</span><br/>
-                      SPECIMEN: <strong style="color: var(--ink); font-size: 15px;">{classification.detected_object}</strong>
-                    </div>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                      <span style="background: rgba(0, 240, 255, 0.15); color: var(--teal); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(0, 240, 255, 0.3);">
-                        LINE: {category.replace('_', ' ').upper()}
-                      </span>
-                      <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                        CONFIDENCE: {classification.confidence:.1%}
-                      </span>
-                    </div>
-                  </div>
+            preview_col1, preview_col2 = st.columns([1, 2])
+            with preview_col1:
+                st.image(original, caption=f"Rejected Upload: {uploaded_name} (Not in Trained Dataset)", use_container_width=True)
+            with preview_col2:
+                st.info(
+                    "**Why was this image rejected?**\n\n"
+                    "- **Engine 01 (CLIP ViT-B/32 + Wide-ResNet-50 OOD Gate)** verified that this image falls outside the feature distribution of all 16 trained product categories.\n"
+                    "- If you are certain this is one of the 16 supported industrial parts under unusual camera lighting, you may manually select its **Target Product Specification** from the dropdown above."
+                )
+            return
+        category = classification.category
+        st.markdown(
+            f"""
+            <div style="background: linear-gradient(90deg, rgba(168, 85, 247, 0.12), rgba(0, 240, 255, 0.08)); border: 1px solid rgba(168, 85, 247, 0.4); border-left: 4px solid var(--violet); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); box-shadow: 0 4px 16px var(--shadow);">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <span style="color: var(--violet); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">[ENGINE 01 // OBJECT RECOGNITION]</span><br/>
+                  SPECIMEN: <strong style="color: var(--ink); font-size: 15px;">{classification.detected_object}</strong>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <span style="background: rgba(0, 240, 255, 0.15); color: var(--teal); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(0, 240, 255, 0.3);">
+                    LINE: {category.replace('_', ' ').upper()}
+                  </span>
+                  <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    CONFIDENCE: {classification.confidence:.1%}
+                  </span>
+                </div>
+              </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     else:
         category = category_choice
         if category != classification.category:
@@ -1207,14 +1219,14 @@ def show_ai_detection() -> None:
             <div class="ind-verdict-reject">
               <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                 <h2>
-                  ❌ NOT APPROVED TO SELL // QA GATE: REJECTED
+                  ❌ NOT FOR SELL (NOT APPROVED TO SELL) // QA GATE: REJECTED
                 </h2>
                 <span style="background: #ef4444; color: white; padding: 5px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em;">
-                  QUARANTINED [ERR-DEFECT-DETECTED]
+                  BROKEN / SCRATCHED / DEFECT DETECTED
                 </span>
               </div>
               <p>
-                Component failed automated visual metrology. Surface anomaly threshold exceeded or spatial defect localized. Automated diverter engaged for scrap/rework.
+                This product is <strong>NOT FOR SELL</strong>. Automated visual metrology detected a surface scratch, crack, fracture, or broken region. Component quarantined for scrap/rework.
               </p>
             </div>
             """,
