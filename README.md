@@ -1,95 +1,101 @@
 # Smart Quality Inspection System (IndustrialGuard AI)
 
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.12%2BCUDA-red.svg)](https://pytorch.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.6%2BCUDA-red.svg)](https://pytorch.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.66-brightgreen.svg)](https://streamlit.io/)
+[![YOLOv11](https://img.shields.io/badge/Ultralytics-YOLOv11-amber.svg)](https://github.com/ultralytics/ultralytics)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An end-to-end Computer Vision & Deep Learning inspection system for manufacturing quality assurance. The platform features automated industrial product category detection (cables, bottles, capsules, screws, etc.), normal-only anomaly detection via PatchCore, supervised defect detection via Faster R-CNN/YOLO, and an interactive inspection workspace with instant **APPROVED TO SELL / NOT APPROVED TO SELL** quality verdicts.
+An end-to-end **Computer Vision & Deep Learning Quality Assurance System** for industrial manufacturing inspection. The platform automatically identifies 16 industrial product categories, rejects unsupported/non-dataset images (`NOT TRAINED FOR THIS DATASET`), detects surface scratches, cracks, chips, holes, and structural damage on any uploaded picture, localizes defects with bounding boxes, and issues instant **`APPROVED TO SELL`** or **`NOT FOR SELL`** commercial verdicts.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Key Capabilities
 
-1. **3-Model Industrial AI Architecture**
-   - **🧠 Model 1: Category Recognition Engine (Wide-ResNet-50 Prototypes)**: Instantly classifies any uploaded or webcam product image across 15 industrial classes with top-1 and top-5 confidence scores.
-   - **🔬 Model 2: Surface Quality & Anomaly Analyzer (PatchCore)**: Extracts multi-scale neighborhood patch features, calculates calibrated anomaly scores against normal references, and generates high-resolution pixel defect heatmaps.
-   - **🎯 Model 3: Defect Localizer (Ultralytics YOLOv11)**: Detects and draws precise defect bounding boxes with bounding box coordinates, defect classes, and instance confidence ratings.
+### 1. Synchronous 3-Engine AI + OOD Gate Architecture
+- **🧠 Engine 01 — Tri-Backbone Category & OOD Classifier (`CLIP ViT-B/32` + `Wide-ResNet-50` + `EfficientNet-B0`)**:
+  - Classifies product specimens across **16 industrial categories** (`bottle`, `cable`, `capsule`, `carpet`, `grid`, `hazelnut`, `leather`, `metal_nut`, `pill`, `screw`, `tile`, `toothbrush`, `transistor`, `wood`, `zipper`, `spoon`).
+  - **Strict Non-Dataset Rejection Gate**: Automatically detects and blocks any image that does not belong to the trained industrial dataset (such as people, medical X-rays, vehicles, animals, furniture, or random scenes) with **`🚫 NOT TRAINED FOR THIS DATASET // UNSUPPORTED PICTURE`**.
+- **🔬 Engine 02 — Multi-Modal Surface Defect, Scratch & Fracture Analyzer (`DefectDetectorMLP` + `PatchCore`)**:
+  - Combines `1192-D` global `CLIP` image embeddings, local hotspot-crop `CLIP` embeddings, semantic intact/damaged prompt similarities, `384x384` morphological BlackHat/TopHat/Laplacian scratch & crack spectrometry, and `Wide-ResNet-50` deep features (**97.4% accuracy**).
+  - Detects broken, frayed, cracked, chipped, or scratched specimens on **any unseen uploaded image** regardless of filename and generates pixel-level JET anomaly heatmaps.
+- **🎯 Engine 03 — Spatial Defect Localizer (`Ultralytics YOLOv11n`)**:
+  - Fine-tuned on industrial defects and synthetic surface scratches/cracks/chips to draw bounding boxes with spatial coordinates and confidence scores around damaged regions.
 
-2. **Actionable Commercial Quality Verdicts**
-   - **✅ APPROVED TO SELL**: Product passes all quality tolerance thresholds; confirmed zero defect bounding boxes and low anomaly score. Ready for commercial release.
-   - **❌ NOT APPROVED TO SELL**: Product fails inspection; highlights exact defect regions on both the anomaly heatmap and YOLO bounding box overlay.
+### 2. Commercial QA Gate Verdicts
+- **✅ APPROVED TO SELL**: Intact specimen within calibrated quality thresholds; zero surface defects detected.
+- **❌ NOT FOR SELL (`NOT APPROVED TO SELL`)**: Broken, cracked, frayed, chipped, or scratched specimen rejected by the QA gate with highlighted heatmap and bounding boxes.
+- **🚫 NOT TRAINED FOR THIS DATASET**: Uploaded picture is outside the 16 trained industrial product categories; inspection is halted immediately.
 
-3. **1-Click Live Demo Samples**
-   - Quick testing with 9 preloaded industrial samples: Defective & Normal Cables, Bottles, Capsules, Metal Nuts, Screws, and Hazelnuts.
-
-4. **Multi-View Visual Inspection Gallery**
-   - Side-by-side view of Original Product, Model 2 Surface Anomaly Heatmap (JET colormap), and Model 3 YOLO Defect Bounding Boxes.
-
-5. **Compliance & Reporting**
-   - Automatically generates formal PDF Inspection Certificates with original, heatmap, and YOLO detection panels.
-   - SQLite persistent history tracking every inspection run with timestamps, scores, and processing times.
+### 3. Compliance, Telemetry & Audit Reporting
+- **PDF Inspection Certificates**: 1-click generation of formal QA inspection reports containing original specimen, anomaly heatmap, and YOLO bounding-box panels.
+- **Persistent SQLite Audit Log**: Tracks every inspection run with timestamps, category confidence, anomaly score, and commercial verdict.
 
 ---
 
-## 🏗️ Project Layout
+## 🏗️ Repository Structure
 
 ```text
-├── app.py                     # Main Streamlit Dashboard & AI Inspection App
-├── src/industrialguard/       # Core Package
-│   ├── inference/             # Predictors, Product Classifier, Bottle Detector
-│   ├── preprocessing/         # Edge detection, CLAHE, filters
-│   ├── database/              # SQLite inspection history persistence
-│   ├── visualization/         # Anomaly heatmap generation and overlays
-│   └── reports/               # Formal PDF report generator
-├── models/                    # Classifier models and category centroids
-├── deliverables/              # Project Report (PDF/DOCX), Presentation (PPTX), Guides
-├── reports/                   # Model performance comparisons and benchmark CSVs
-├── results/retrained/         # Evaluation curves, test metrics, and detector weights
-├── scripts/                   # Training pipelines and dataset audit scripts
-└── requirements.txt           # Project dependencies
+├── app.py                              # Main Streamlit Inspection Cockpit & Dashboard
+├── src/industrialguard/                # Core Python Package
+│   ├── inference/
+│   │   ├── product_classifier.py       # Engine 01: Tri-Backbone Classifier & CLIP OOD Gate
+│   │   ├── predictor.py                # Engine 02: Multi-Modal Defect/Scratch Head & PatchCore
+│   │   ├── yolo_detector.py            # Engine 03: YOLOv11n Spatial Defect Localizer
+│   │   └── pbd_detector.py             # Auxiliary Faster R-CNN Bottle Defect Detector
+│   ├── preprocessing/                  # CLAHE, Canny edge maps, Gaussian/Median filters
+│   ├── visualization/                  # JET anomaly heatmap & overlay rendering
+│   ├── database/                       # SQLite inspection history persistence
+│   └── reports/                        # Formal PDF certificate generator
+├── models/                             # Trained Checkpoints & Feature Banks
+│   ├── clip_category_bank.pt           # Precomputed CLIP ViT-B/32 category & OOD bank
+│   ├── defect_detector_head.pt         # Trained 1192-D Multi-Modal Defect/Scratch MLP
+│   ├── industrial_defect_yolo.pt       # Fine-tuned YOLOv11n industrial defect detector
+│   ├── category_centroids.pt           # 16-class Wide-ResNet-50 prototype centroids
+│   ├── product_classifier_efficientnet.pt # Fine-tuned EfficientNet-B0 weights
+│   └── category_thresholds.json        # Calibrated anomaly thresholds per category
+├── data/sample/                        # Curated live-demo normal, defective & unseen specimens
+├── scripts/
+│   ├── retrain_all_models.py           # Unified GPU retraining pipeline (CLIP + MLP + YOLOv11)
+│   └── predict_image.py                # CLI single-image inspection utility
+├── reports/                            # Benchmark CSVs, ROC/Confusion plots & evaluation notes
+├── deliverables/                       # Project Report (PDF/DOCX), Presentation (PPTX) & Guides
+└── requirements.txt                    # Python dependencies
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-### 1. Environment Setup
+### 1. Clone & Install Dependencies
 ```powershell
-# Clone the repository
 git clone https://github.com/prince-kcode/smartQualityInsoection-system.git
 cd smartQualityInsoection-system
-
-# Activate virtual environment
-.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-### 2. Run the Inspection Dashboard
+### 2. Launch the Live Inspection Dashboard
 ```powershell
-$env:PYTHONPATH = "src"
-.\.venv\Scripts\streamlit.exe run app.py
+streamlit run app.py --server.port 8501
 ```
 Open **`http://localhost:8501`** in your browser.
 
----
-
-## 🔬 Supported Product Categories
-
-| Category | Description | Model AUROC |
-| :--- | :--- | :--- |
-| **Cable** | Electrical wiring & harness defect detection | 0.996 |
-| **Bottle** | Glass/translucent container inspection | 1.000 |
-| **Capsule** | Pharmaceutical capsule cracks & faults | 0.998 |
-| **Screw** | Thread damage, bending & head defects | 0.985 |
-| **Metal Nut** | Machined surface scratches & structural cracks | 0.998 |
-| **Hazelnut** | Agricultural sorting & shell defects | 1.000 |
-| **Transistor**| Electronic component pin & body damage | 0.989 |
-| **Wood / Tile / Carpet** | Texture surface anomalies and stains | >0.96 |
+### 3. Retrain All Models (Optional)
+```powershell
+python scripts/retrain_all_models.py
+```
 
 ---
 
-## 📊 Evaluation & Deliverables
-Detailed project reports, presentation slides, and viva preparation guides are stored in [`deliverables/`](deliverables/):
-- **Project Report**: [`IndustrialGuard_AI_Project_Report.pdf`](deliverables/IndustrialGuard_AI_Project_Report.pdf)
-- **Presentation**: [`IndustrialGuard_AI_Presentation.pptx`](deliverables/IndustrialGuard_AI_Presentation.pptx)
-- **Deployment Guide**: [`Deployment_Guide.md`](deliverables/Deployment_Guide.md)
+## 🔬 Supported Industrial Product Categories (16 Classes)
+
+| Category | Inspection Scope | Category | Inspection Scope |
+| :--- | :--- | :--- | :--- |
+| **Bottle** | Glass & plastic container cracks/contamination | **Pill** | Pharmaceutical tablet chips & discoloration |
+| **Cable** | Electrical wire & charger cord fraying/cuts | **Screw** | Thread damage, bending & head scratches |
+| **Capsule** | Pharmaceutical capsule cracks & dents | **Spoon** | Stainless steel & tableware scratches/bends |
+| **Carpet** | Woven textile tears, stains & weave faults | **Tile** | Ceramic structural cracks & glaze pits |
+| **Grid** | Metal mesh breaks & bent intersections | **Toothbrush** | Bristle splay & handle molding defects |
+| **Hazelnut** | Shell cracks, holes & surface cuts | **Transistor** | Semiconductor package & lead damage |
+| **Leather** | Surface cuts, pokes & texture anomalies | **Wood** | Timber & wooden cutlery chips, knots & cracks |
+| **Metal Nut** | Machined surface scratches & thread faults | **Zipper** | Broken teeth & fabric tape fraying |

@@ -15,8 +15,10 @@ build/
 *.pth
 *.ckpt
 *.onnx
+*.joblib
 results/**/*.pt
-industrialguard_mlp/**/*.pt
+models/yolo11n.pt
+models/yolo_runs/**
 
 # Local configuration and databases
 .env
@@ -26,6 +28,7 @@ industrialguard_mlp/**/*.pt
 # Datasets and local artifacts
 data/dataset_products/**
 data/dataset_products_split/**
+data/yolo_defect_dataset/**
 data/raw/**
 data/processed/**
 artifacts/**
@@ -38,13 +41,10 @@ artifacts/**
 results/*/Patchcore/**
 results/retrained/*/Patchcore/**
 results/Patchcore/**
+results/autoencoder/**
 
-# Subprojects / temp profiles
-industrialguard_mlp/datasets/**
-industrialguard_mlp/models/**
-industrialguard_mlp/.chrome_test_profile/**
-industrialguard_mlp/.e2e_chrome_profile/**
-industrialguard_mlp/yolo11n.pt
+# Legacy subprojects / temp profiles
+industrialguard_mlp/**
 
 # Editors and OS
 .mpl_cache/
@@ -52,4 +52,3 @@ industrialguard_mlp/yolo11n.pt
 .idea/
 Thumbs.db
 Desktop.ini
-models/yolo_runs/**

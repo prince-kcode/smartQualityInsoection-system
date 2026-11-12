@@ -16,7 +16,7 @@ RAW_DIR = ROOT / "data" / "raw" / "mvtec_ad"
 OUTPUT_DIR = ROOT / "data" / "processed" / "mvtec_yolo"
 MODELS_DIR = ROOT / "models"
 TARGET_MODEL = MODELS_DIR / "industrial_defect_yolo.pt"
-PRETRAINED_YOLO = ROOT / "industrialguard_mlp" / "yolo11n.pt"
+PRETRAINED_YOLO = MODELS_DIR / "yolo11n.pt"
 
 
 def prepare_dataset():

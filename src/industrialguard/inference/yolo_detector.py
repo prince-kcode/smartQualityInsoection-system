@@ -22,8 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_MODEL_PATHS = [
     PROJECT_ROOT / "models" / "industrial_defect_yolo.pt",
     PROJECT_ROOT / "models" / "bottle_defect_yolo.pt",
-    PROJECT_ROOT / "industrialguard_mlp" / "models" / "bottle_defect_yolo.pt",
-    PROJECT_ROOT / "industrialguard_mlp" / "yolo11n.pt",
+    PROJECT_ROOT / "models" / "yolo11n.pt",
 ]
 
 
