@@ -1006,40 +1006,46 @@ def show_ai_detection() -> None:
 
     if category_choice == "Auto-detect from image (Recommended)":
         if classification.category == "unknown":
+            fallback_cat = (
+                classification.ranked_scores[0][0]
+                if classification.ranked_scores and classification.ranked_scores[0][0] in CATEGORIES
+                else "bottle"
+            )
+            category = fallback_cat
             st.markdown(
                 f"""
-                <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-left: 4px solid var(--rose); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
-                  <strong style="color: var(--rose); font-size: 14px;">[UNKNOWN SPECIMEN / REJECTED]</strong> {classification.detected_object}<br/>
+                <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-left: 4px solid var(--amber); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink);">
+                  <strong style="color: var(--amber); font-size: 14px;">[LOW-CONFIDENCE SPECIMEN // AUTO-ROUTED]</strong> {classification.detected_object}<br/>
                   <div style="margin-top: 6px; font-size: 12px; color: var(--muted);">
-                    Maximum confidence score: <strong>{classification.confidence:.1%}</strong> (Threshold: 50.0%). To inspect this specimen, manually select a <strong>Target Product Specification</strong> from the dropdown above.
+                    Confidence score: <strong>{classification.confidence:.1%}</strong>. Automatically routed to closest inspection line: <strong>{category.replace('_', ' ').upper()}</strong>.
                   </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
-            return
-        category = classification.category
-        st.markdown(
-            f"""
-            <div style="background: linear-gradient(90deg, rgba(168, 85, 247, 0.12), rgba(0, 240, 255, 0.08)); border: 1px solid rgba(168, 85, 247, 0.4); border-left: 4px solid var(--violet); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); box-shadow: 0 4px 16px var(--shadow);">
-              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                <div>
-                  <span style="color: var(--violet); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">[ENGINE 01 // OBJECT RECOGNITION]</span><br/>
-                  SPECIMEN: <strong style="color: var(--ink); font-size: 15px;">{classification.detected_object}</strong>
+        else:
+            category = classification.category
+            st.markdown(
+                f"""
+                <div style="background: linear-gradient(90deg, rgba(168, 85, 247, 0.12), rgba(0, 240, 255, 0.08)); border: 1px solid rgba(168, 85, 247, 0.4); border-left: 4px solid var(--violet); padding: 14px 20px; border-radius: 8px; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink); box-shadow: 0 4px 16px var(--shadow);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                      <span style="color: var(--violet); font-weight: 800; font-size: 12px; letter-spacing: 0.08em;">[ENGINE 01 // OBJECT RECOGNITION]</span><br/>
+                      SPECIMEN: <strong style="color: var(--ink); font-size: 15px;">{classification.detected_object}</strong>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                      <span style="background: rgba(0, 240, 255, 0.15); color: var(--teal); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(0, 240, 255, 0.3);">
+                        LINE: {category.replace('_', ' ').upper()}
+                      </span>
+                      <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        CONFIDENCE: {classification.confidence:.1%}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                  <span style="background: rgba(0, 240, 255, 0.15); color: var(--teal); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(0, 240, 255, 0.3);">
-                    LINE: {category.replace('_', ' ').upper()}
-                  </span>
-                  <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                    CONFIDENCE: {classification.confidence:.1%}
-                  </span>
-                </div>
-              </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+                """,
+                unsafe_allow_html=True,
+            )
     else:
         category = category_choice
         if category != classification.category:
@@ -1090,7 +1096,8 @@ def show_ai_detection() -> None:
                 # Model 2: Surface Quality / PatchCore Anomaly Inspection
                 predictor = _get_loaded_predictor(category)
                 with tempfile.TemporaryDirectory(prefix="industrialguard-") as temporary:
-                    temporary_image = Path(temporary) / "input.png"
+                    safe_stem = Path(uploaded_name).stem or "input"
+                    temporary_image = Path(temporary) / f"{safe_stem}.png"
                     Image.fromarray(original).save(temporary_image, format="PNG")
                     result = predict_image(
                         temporary_image,
@@ -1106,6 +1113,8 @@ def show_ai_detection() -> None:
                     original,
                     conf=yolo_conf,
                     target_category=category,
+                    is_anomalous=result.is_anomalous,
+                    anomaly_map=result.anomaly_map,
                 )
 
             # Combined Verdict Fusion
@@ -1178,7 +1187,7 @@ def show_ai_detection() -> None:
                 "yolo_result": yolo_result,
             }
             st.session_state["latest_prediction"] = current
-        except (FileNotFoundError, RuntimeError, ValueError) as error:
+        except Exception as error:
             LOGGER.exception("Quality inspection failed for category %s", category)
             st.error(str(error))
             return

@@ -25,6 +25,7 @@ industrialguard_mlp/**/*.pt
 
 # Datasets and local artifacts
 data/dataset_products/**
+data/dataset_products_split/**
 data/raw/**
 data/processed/**
 artifacts/**
