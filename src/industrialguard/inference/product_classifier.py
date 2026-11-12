@@ -157,13 +157,26 @@ def validate_and_preprocess_image(image: np.ndarray | Image.Image | Path | str) 
 
 
 def create_feature_model() -> torch.nn.Module:
-    """Create the 2048-D Wide-ResNet-50 feature extractor from local cache."""
+    """Create the 2048-D Wide-ResNet-50 feature extractor from local cache or HuggingFace Hub."""
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     hf_pattern = os.path.expanduser(
         "~/.cache/huggingface/hub/models--timm--wide_resnet50_2.racm_in1k/snapshots/*/*.safetensors"
     )
     cached_files = glob.glob(hf_pattern)
+    if not cached_files:
+        try:
+            from huggingface_hub import hf_hub_download
+
+            downloaded = hf_hub_download(
+                repo_id="timm/wide_resnet50_2.racm_in1k",
+                filename="model.safetensors",
+            )
+            if downloaded and os.path.isfile(downloaded):
+                cached_files = [downloaded]
+        except Exception as exc:
+            LOGGER.warning("Could not download wide_resnet50_2.racm_in1k from HuggingFace Hub: %s", exc)
+
     if cached_files:
         try:
             from safetensors.torch import load_file
@@ -175,32 +188,27 @@ def create_feature_model() -> torch.nn.Module:
             model.to(device).eval()
             return model
         except Exception as exc:
-            LOGGER.warning("Could not load cached safetensors for wide_resnet50_2: %s", exc)
+            LOGGER.warning("Could not load safetensors for wide_resnet50_2: %s", exc)
 
     try:
         import timm
 
-        model = timm.create_model("wide_resnet50_2", pretrained=True, num_classes=0)
+        model = timm.create_model("wide_resnet50_2.racm_in1k", pretrained=True, num_classes=0)
         model.to(device).eval()
         return model
     except Exception:
         pass
 
-    resnet50_ckpt = Path.home() / ".cache" / "torch" / "hub" / "checkpoints" / "resnet50-11ad3fa6.pth"
-    if resnet50_ckpt.is_file():
-        try:
-            model = models.resnet50(weights=None)
-            model.load_state_dict(torch.load(resnet50_ckpt, map_location="cpu", weights_only=True))
-            model.fc = torch.nn.Identity()
-            model.to(device).eval()
-            return model
-        except Exception:
-            pass
-
-    model = models.wide_resnet50_2(weights=None)
-    model.fc = torch.nn.Identity()
-    model.to(device).eval()
-    return model
+    try:
+        model = models.wide_resnet50_2(weights=models.Wide_ResNet50_2_Weights.DEFAULT)
+        model.fc = torch.nn.Identity()
+        model.to(device).eval()
+        return model
+    except Exception:
+        model = models.wide_resnet50_2(weights=None)
+        model.fc = torch.nn.Identity()
+        model.to(device).eval()
+        return model
 
 
 def _get_components() -> tuple[torch.nn.Module, Any, dict[str, torch.Tensor] | None]:
@@ -241,10 +249,14 @@ def _get_clip_components():
         try:
             from transformers import CLIPModel, CLIPProcessor
 
-            _CLIP_MODEL = CLIPModel.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True).to(_DEVICE).eval()
-            _CLIP_PROC = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True)
+            try:
+                _CLIP_MODEL = CLIPModel.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True).to(_DEVICE).eval()
+                _CLIP_PROC = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32", local_files_only=True)
+            except Exception:
+                _CLIP_MODEL = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(_DEVICE).eval()
+                _CLIP_PROC = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
         except Exception as exc:
-            LOGGER.warning("Could not load local CLIP model: %s", exc)
+            LOGGER.warning("Could not load CLIP model: %s", exc)
             _CLIP_MODEL = None
             _CLIP_PROC = None
 

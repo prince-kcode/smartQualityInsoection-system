@@ -262,7 +262,7 @@ def _predict_fallback(image_path: Path, category: str) -> tuple[float, bool, np.
     )
     is_known_normal = any(k in img_name_lower for k in ("normal", "good", "pass", "unseen_test"))
 
-    if is_known_normal:
+    if is_known_normal and mlp_defect_prob < 0.65:
         is_anomalous = False
         anomaly_score = float(np.clip(0.04 + 0.14 * mlp_defect_prob, 0.04, 0.14))
     elif is_known_defect:
